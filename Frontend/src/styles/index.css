@@ -1,0 +1,18 @@
+/* Global reset mínimo */
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Sin scroll global */
+body {
+  overflow: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Enlaces y botones neutros */
+a { text-decoration: none; color: inherit; }
+button { font: inherit; cursor: pointer; background: none; border: none; }

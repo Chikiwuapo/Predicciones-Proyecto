@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 16px;
+  gap: 16px;
+}
+
+.separator {
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.2;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.title {
+  text-align: center;
+  font-weight: 700;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profileBadge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  flex-shrink: 0;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.profileName {
+  font-weight: 600;
+}
+
+.profileRole {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navItem,
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.groupChildren {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 8px;
+}
+
+.logout {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logoutButton {
+  width: 100%;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.copyright {
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}

@@ -1,0 +1,20 @@
+.wrapper {
+    display: flex;
+    height: 100vh;      /* antes: min-height */
+    overflow: hidden;   /* evita scroll global desde el layout */
+  }
+  
+  .sidebar {
+    flex: 0 0 280px;
+    height: 100vh;      /* sidebar a altura completa */
+    overflow: auto;     /* si el contenido es grande, scroll interno aquí */
+  }
+  
+  .main {
+    flex: 1;
+    padding: 16px;
+    box-sizing: border-box;
+    min-width: 0;       /* importante para que el contenido pueda encoger y hacer scroll */
+    height: 100vh;      /* asegura altura para el scroll interno */
+    overflow: auto;     /* scroll solo en el área principal */
+  }
