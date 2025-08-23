@@ -64,7 +64,7 @@
 
 .card:hover {
   border-color: var(--neon);
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+  box-shadow: 0 6px 20px rgba(245, 166, 35, 0.18);
 }
 
 .card h3 {

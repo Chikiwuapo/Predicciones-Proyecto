@@ -230,61 +230,7 @@ export default function Abandono() {
                 </div>
               </div>
               
-              <div className={styles.formGroup}>
-                <label>
-                  <FaVenusMars className={styles.inputIcon} />
-                  <span>Género</span>
-                </label>
-                <div className={styles.selectWrapper}>
-                  <select 
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Seleccione...</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
-                    <option value="O">Otro</option>
-                  </select>
-                </div>
-              </div>
               
-              <div className={styles.formGroup}>
-                <label>
-                  <FaMoneyBillWave className={styles.inputIcon} />
-                  <span>Ingreso familiar (S/)</span>
-                </label>
-                <div className={styles.inputWrapper}>
-                  <input 
-                    type="number" 
-                    name="familyIncome"
-                    value={formData.familyIncome}
-                    onChange={handleChange}
-                    min="0" 
-                    step="0.01"
-                    placeholder="500.00" 
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label>
-                  <FaMapMarkerAlt className={styles.inputIcon} />
-                  <span>Lugar</span>
-                </label>
-                <div className={styles.inputWrapper}>
-                  <input 
-                    type="text" 
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="Ciudad, Provincia" 
-                    required
-                  />
-                </div>
-              </div>
               
               <div className={styles.formGroup}>
                 <label>

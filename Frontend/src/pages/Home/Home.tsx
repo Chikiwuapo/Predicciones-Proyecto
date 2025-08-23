@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaChartLine, FaWineBottle, FaSchool, FaHistory, FaCog, FaInfoCircle } from 'react-icons/fa';
+import { FaChartLine, FaWineBottle, FaSchool, FaCog, FaInfoCircle } from 'react-icons/fa';
 import styles from './Home.module.css';
 
 interface QuickAccessCardProps {
@@ -73,24 +73,17 @@ export default function Home() {
       color: '#4caf50'
     },
     {
-      title: 'Historial',
-      description: 'Revisa el historial de análisis previos',
-      icon: <FaHistory className={styles.cardIcon} />,
-      path: '/historial',
-      color: '#ff9800'
-    },
-    {
-      title: 'Configuración',
-      description: 'Ajusta las preferencias de la aplicación',
+      title: 'Perfil',
+      description: 'Gestiona tu información personal y preferencias',
       icon: <FaCog className={styles.cardIcon} />,
-      path: '/configuracion',
+      path: '/configuraciones/perfil',
       color: '#607d8b'
     },
     {
-      title: 'Acerca de',
-      description: 'Información sobre el proyecto y los desarrolladores',
+      title: 'Usuarios',
+      description: 'Administra los usuarios del sistema',
       icon: <FaInfoCircle className={styles.cardIcon} />,
-      path: '/acerca-de',
+      path: '/configuraciones/usuarios',
       color: '#795548'
     }
   ];

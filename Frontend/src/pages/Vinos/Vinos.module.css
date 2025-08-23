@@ -21,7 +21,7 @@
   margin: 0 0 8px 0;
   font-size: 24px;
   color: var(--neon);
-  text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+  text-shadow: 0 0 10px rgba(245, 166, 35, 0.25);
 }
 
 .header p {
@@ -68,7 +68,7 @@
   background: var(--neon);
   color: #000;
   font-weight: 600;
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.3);
 }
 
 .tab:disabled {
@@ -87,6 +87,13 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   border: 1px solid var(--stroke);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--neon);
+  box-shadow: 0 10px 24px rgba(245, 166, 35, 0.15);
 }
 
 .card h2 {
@@ -134,7 +141,7 @@
 .formGroup select:focus {
   outline: none;
   border-color: var(--neon);
-  box-shadow: 0 0 0 2px rgba(0, 255, 170, 0.2);
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.25);
 }
 
 .formActions {
@@ -154,15 +161,16 @@
   border-radius: 4px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
   text-transform: uppercase;
   font-size: 13px;
   letter-spacing: 0.5px;
 }
 
 .primaryButton:hover {
-  background: #00e6a8;
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+  background: #e09517;
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.35);
+  transform: translateY(-1px);
 }
 
 .primaryButton:disabled {
@@ -179,15 +187,16 @@
   border-radius: 4px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease, color .16s ease;
   text-transform: uppercase;
   font-size: 13px;
   letter-spacing: 0.5px;
 }
 
 .secondaryButton:hover {
-  background: rgba(0, 255, 170, 0.1);
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.1);
+  background: rgba(245, 166, 35, 0.12);
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.12);
+  transform: translateY(-1px);
 }
 
 /* History Styles */
@@ -213,12 +222,164 @@
   border: 1px solid var(--stroke);
   border-radius: 6px;
   padding: 15px;
-  transition: all 0.2s ease;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
 .historyCard:hover {
   border-color: var(--neon);
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.1);
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Header navigation button and icons */
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+
+.navButton:hover {
+  background: rgba(245, 166, 35, 0.08);
+  border-color: var(--neon);
+  box-shadow: 0 6px 18px rgba(245, 166, 35, 0.18);
+  transform: translateY(-1px);
+}
+
+.buttonIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Info icon button inside inputs */
+.infoButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-left: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--muted);
+  transition: background .16s ease, color .16s ease, box-shadow .16s ease, transform .16s ease, border-color .16s ease;
+}
+
+.infoButton:hover {
+  color: var(--accent-contrast);
+  background: var(--neon);
+  border-color: var(--neon);
+  box-shadow: 0 6px 16px rgba(245, 166, 35, 0.25);
+  transform: translateY(-1px);
+}
+
+.infoIcon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Modal base */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  animation: fadeIn .18s ease both;
+}
+
+.modal {
+  width: min(560px, 96vw);
+  background: var(--bg-1);
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  overflow: hidden;
+  transform-origin: center;
+  animation: popIn .2s ease both;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.modalClose {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--text);
+  line-height: 1;
+  transition: background .16s ease, transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+.modalClose:hover {
+  background: rgba(245, 166, 35, 0.12);
+  border-color: var(--neon);
+  box-shadow: 0 6px 16px rgba(245, 166, 35, 0.18);
+  transform: translateY(-1px);
+}
+
+.modalBody {
+  padding: 16px;
+  color: var(--text);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 16px 16px;
+}
+
+.confirmButton {
+  background: var(--neon);
+  color: #000;
+  border: 1px solid var(--neon);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+
+.confirmButton:hover {
+  background: #e09517;
+  border-color: #e09517;
+  box-shadow: 0 10px 24px rgba(245, 166, 35, 0.25);
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.98); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .historyCardHeader {

@@ -20,7 +20,7 @@
   color: var(--neon);
   font-size: 2rem;
   font-weight: 600;
-  text-shadow: 0 0 10px rgba(0, 255, 170, 0.2);
+  text-shadow: 0 0 10px rgba(245, 166, 35, 0.25);
 }
 
 .header p {
@@ -247,8 +247,8 @@
 }
 
 .primaryButton:hover {
-  background: #00e6a8;
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+  background: #e09517;
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.35);
   transform: translateY(-2px);
 }
 
@@ -310,7 +310,7 @@
 
 .card:hover {
   border-color: var(--neon);
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+  box-shadow: 0 6px 20px rgba(245, 166, 35, 0.18);
 }
 
 .card h2 {
@@ -343,7 +343,7 @@
 
 .quickAction:hover {
   border-color: var(--neon);
-  background: rgba(0, 255, 136, 0.05);
+  background: rgba(245, 166, 35, 0.08);
   transform: translateY(-2px);
 }
 

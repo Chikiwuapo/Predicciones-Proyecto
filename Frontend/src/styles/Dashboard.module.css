@@ -17,4 +17,5 @@
     min-width: 0;       /* importante para que el contenido pueda encoger y hacer scroll */
     height: 100vh;      /* asegura altura para el scroll interno */
     overflow: auto;     /* scroll solo en el área principal */
+    background: var(--page-bg);
   }

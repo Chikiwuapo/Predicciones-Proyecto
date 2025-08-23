@@ -21,7 +21,7 @@
   margin: 0 0 8px 0;
   font-size: 24px;
   color: var(--neon);
-  text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+  text-shadow: 0 0 10px rgba(245, 166, 35, 0.25);
 }
 
 .header p {
@@ -68,7 +68,7 @@
   background: var(--neon);
   color: #000;
   font-weight: 600;
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.3);
 }
 
 .tab:disabled {
@@ -133,7 +133,7 @@
 .formGroup select:focus {
   outline: none;
   border-color: var(--neon);
-  box-shadow: 0 0 0 2px rgba(0, 255, 170, 0.2);
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.25);
 }
 
 .checkboxGroup {
@@ -185,8 +185,8 @@
 }
 
 .primaryButton:hover {
-  background: #00e6a8;
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+  background: #e09517;
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.35);
 }
 
 .primaryButton:disabled {
@@ -210,8 +210,8 @@
 }
 
 .secondaryButton:hover {
-  background: rgba(0, 255, 170, 0.1);
-  box-shadow: 0 0 15px rgba(0, 255, 170, 0.1);
+  background: rgba(245, 166, 35, 0.12);
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.12);
 }
 
 /* Result Card Styles */

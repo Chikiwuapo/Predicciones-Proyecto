@@ -7,10 +7,53 @@ html, body, #root {
   padding: 0;
 }
 
+/* Tipografía: Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Tema claro (paleta del mockup) */
+:root[data-theme="light"] {
+  --page-bg: #f3f6fa;           /* fondo de la app */
+  --bg: #ffffff;                 /* inputs */
+  --bg-1: #ffffff;               /* cards */
+  --bg-2: #ffffff;               /* cards alternativas */
+  --stroke: #e2e8f0;             /* bordes suaves */
+  --text: #0f172a;               /* texto principal */
+  --muted: #64748b;              /* texto secundario */
+  --accent: #f5a623;             /* amarillo acento */
+  --neon: var(--accent);         /* compatibilidad con módulos existentes */
+  --accent-contrast: #0f172a;    /* texto sobre acento */
+  --sidebar-bg: #0f2a3f;         /* azul marino */
+  --sidebar-fg: #e6eef6;         /* texto en sidebar */
+  --sidebar-active: #134563;     /* hover/active sidebar */
+}
+
+/* Tema oscuro (derivado) */
+:root[data-theme="dark"] {
+  --page-bg: #0b1320;
+  --bg: #0f172a;
+  --bg-1: #0f172a;
+  --bg-2: #111827;
+  --stroke: #243042;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #f5a623;
+  --neon: var(--accent);         /* compatibilidad con módulos existentes */
+  --accent-contrast: #0b1320;
+  --sidebar-bg: #0a2234;
+  --sidebar-fg: #d8e4ee;
+  --sidebar-active: #10354f;
+}
+
 /* Sin scroll global */
 body {
   overflow: hidden;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: var(--font-sans);
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 /* Enlaces y botones neutros */

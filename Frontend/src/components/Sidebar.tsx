@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { FaHome, FaWineBottle, FaSchool, FaChartLine, FaCog, FaUser, FaUsers, FaSignOutAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import styles from "../styles/Sidebar.module.css";
 
 export default function Sidebar() {
@@ -31,7 +32,10 @@ export default function Sidebar() {
           to="/"
           end
         >
-          Inicio
+          <span className={styles.navContent}>
+            <FaHome className={styles.icon} />
+            <span className={styles.label}>Inicio</span>
+          </span>
         </NavLink>
         <NavLink 
           className={({ isActive }) => 
@@ -39,7 +43,10 @@ export default function Sidebar() {
           } 
           to="clasificacion-vinos"
         >
-          Clasificación multiclase (Vinos)
+          <span className={styles.navContent}>
+            <FaWineBottle className={styles.icon} />
+            <span className={styles.label}>Clasificación multiclase (Vinos)</span>
+          </span>
         </NavLink>
         <NavLink 
           className={({ isActive }) => 
@@ -47,7 +54,10 @@ export default function Sidebar() {
           } 
           to="abandono"
         >
-          Abandono escolar
+          <span className={styles.navContent}>
+            <FaSchool className={styles.icon} />
+            <span className={styles.label}>Abandono escolar</span>
+          </span>
         </NavLink>
         <NavLink 
           className={({ isActive }) => 
@@ -55,7 +65,10 @@ export default function Sidebar() {
           } 
           to="estadisticas"
         >
-          Estadísticas
+          <span className={styles.navContent}>
+            <FaChartLine className={styles.icon} />
+            <span className={styles.label}>Estadísticas</span>
+          </span>
         </NavLink>
 
         <div className={styles.group}>
@@ -65,17 +78,28 @@ export default function Sidebar() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
           >
-            <span>Configuraciones</span>
-            <span>{open ? "▴" : "▾"}</span>
+            <span className={styles.navContent}>
+              <FaCog className={styles.icon} />
+              <span className={styles.label}>Configuraciones</span>
+            </span>
+            <span className={styles.chevron} aria-hidden>
+              {open ? <FaChevronUp /> : <FaChevronDown />}
+            </span>
           </button>
 
           {open && (
             <div className={styles.groupChildren}>
               <NavLink className={styles.navButton} to="configuraciones/perfil">
-                Perfil
+                <span className={styles.navContent}>
+                  <FaUser className={styles.icon} />
+                  <span className={styles.label}>Perfil</span>
+                </span>
               </NavLink>
               <NavLink className={styles.navButton} to="configuraciones/usuarios">
-                Usuarios
+                <span className={styles.navContent}>
+                  <FaUsers className={styles.icon} />
+                  <span className={styles.label}>Usuarios</span>
+                </span>
               </NavLink>
             </div>
           )}
@@ -83,7 +107,12 @@ export default function Sidebar() {
       </nav>
 
       <div className={styles.logout}>
-        <button className={styles.logoutButton}>Cerrar sesión</button>
+        <button className={styles.logoutButton}>
+          <span className={styles.navContent}>
+            <FaSignOutAlt className={styles.icon} />
+            <span className={styles.label}>Cerrar sesión</span>
+          </span>
+        </button>
         <div className={styles.separator} />
         <div className={styles.copyright}>© 2025 Proyecto Predicciones</div>
       </div>
