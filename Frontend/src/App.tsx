@@ -1,32 +1,32 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
-
-const Placeholder = ({ title }: { title: string }) => <h1>{title}</h1>;
+import Dashboard from '@/pages/Dashboard/Dashboard';
+import Home from '@/pages/Home/Home';
+import Stats from '@/pages/Stats/Stats';
+import Profile from '@/pages/Settings/Profile';
+import Users from '@/pages/Settings/Users';
+import Vinos from '@/pages/Vinos/Vinos';
+import Abandono from '@/pages/Abandono/Abandono';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Dashboard />}>
-          {/* index -> Inicio */}
-          <Route index element={<Placeholder title="Inicio" />} />
-
-          {/* Rutas principales */}
-          <Route path="reportes" element={<Placeholder title="Cáncer de mama" />} />
-          <Route path="calendario" element={<Placeholder title="Clasificación multiclases" />} />
-          {/* Si deseas un Reportes general separado, cambia la ruta o ajusta el Sidebar */}
-
-          {/* Configuraciones */}
+          <Route index element={<Home />} />
+          <Route path="clasificacion-vinos" element={<Vinos />} />
+          <Route path="abandono" element={<Abandono />} />
+          <Route path="estadisticas" element={<Stats />} />
+          
+          {/* Nested settings routes */}
           <Route path="configuraciones">
-            <Route path="pagos" element={<Placeholder title="Pagos" />} />
-            <Route path="perfil" element={<Placeholder title="Perfil" />} />
-            <Route path="sistema" element={<Placeholder title="Sistema" />} />
-            <Route path="usuarios" element={<Placeholder title="Usuarios" />} />
+            <Route index element={<Navigate to="perfil" replace />} />
+            <Route path="perfil" element={<Profile />} />
+            <Route path="usuarios" element={<Users />} />
           </Route>
+          
+          {/* Redirect any unmatched routes to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
-
-        {/* Redirección para rutas inexistentes */}
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

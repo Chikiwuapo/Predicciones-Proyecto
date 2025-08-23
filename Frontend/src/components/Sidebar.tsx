@@ -24,17 +24,38 @@ export default function Sidebar() {
       <div className={styles.separator} />
 
       <nav className={styles.nav}>
-        <NavLink className={styles.navItem} to="">
+        <NavLink 
+          className={({ isActive }) => 
+            `${styles.navItem} ${isActive ? styles.active : ''}`
+          } 
+          to="/"
+          end
+        >
           Inicio
         </NavLink>
-        <NavLink className={styles.navItem} to="reportes">
-          Cáncer de mama
+        <NavLink 
+          className={({ isActive }) => 
+            `${styles.navItem} ${isActive ? styles.active : ''}`
+          } 
+          to="clasificacion-vinos"
+        >
+          Clasificación multiclase (Vinos)
         </NavLink>
-        <NavLink className={styles.navItem} to="calendario">
-          Clasificación multiclases
+        <NavLink 
+          className={({ isActive }) => 
+            `${styles.navItem} ${isActive ? styles.active : ''}`
+          } 
+          to="abandono"
+        >
+          Abandono escolar
         </NavLink>
-        <NavLink className={styles.navItem} to="calendario">
-          Reportes
+        <NavLink 
+          className={({ isActive }) => 
+            `${styles.navItem} ${isActive ? styles.active : ''}`
+          } 
+          to="estadisticas"
+        >
+          Estadísticas
         </NavLink>
 
         <div className={styles.group}>
@@ -53,11 +74,8 @@ export default function Sidebar() {
               <NavLink className={styles.navButton} to="configuraciones/perfil">
                 Perfil
               </NavLink>
-              <NavLink
-                className={styles.navButton}
-                to="configuraciones/sistema"
-              >
-                Sistema
+              <NavLink className={styles.navButton} to="configuraciones/usuarios">
+                Usuarios
               </NavLink>
             </div>
           )}

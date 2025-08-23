@@ -1,0 +1,38 @@
+.icon {
+    padding: 5px ;
+    border-radius: 50%;
+    background-color: #4b4b4b;
+}
+
+.menuContainer {
+  background-color: var(92, 92, 92);
+  height: 100%;
+  width: 100%;
+}
+[data-theme="light"] .menuContainer {
+  background-color: rgb(92, 92, 92) !important;
+}
+
+[data-theme="light"] .buttontheme {
+  background-color: rgb(255, 255, 255) !important;
+}
+
+[data-theme="light"] .menuContainer,
+[data-theme="light"] .menuContainer .ant-menu,
+[data-theme="light"] .menuContainer .ant-menu-item,
+[data-theme="light"] .menuContainer .ant-menu-submenu,
+[data-theme="light"] .menuContainer .ant-menu-submenu-title {
+  color: #ffffff !important;
+}
+[data-theme="light"] .menuContainer .ant-menu-item-selected,
+[data-theme="light"] .menuContainer .ant-menu-item-active,
+[data-theme="light"] .menuContainer .ant-menu-item:hover {
+  background-color: #ecfff3 !important;
+  color: #1CB54A !important;
+}
+
+[data-theme="light"] .icon {
+  background-color: #e0e0e0 !important;
+  color: #232323 !important;
+  border: 1px solid #191b19 !important;
+}
