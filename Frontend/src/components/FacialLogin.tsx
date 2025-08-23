@@ -17,38 +17,34 @@ const FacialLogin = ({ onLogin, onShowRegister = () => {} }: Props) => {
   }
 
   return (
-    <div className="facial-login-container">
-      <h1>Inicio de Sesión Facial</h1>
-      <p>Por favor, permite el acceso a tu cámara.</p>
+    <main className="content" style={{ overflow: 'hidden', height: '100vh' }}>
+      <div className="card page-card">
+        <h2 className="page-title" style={{ textAlign: 'center' }}>Inicio de Sesión Facial</h2>
+        <div className="card webcam-card">
+          <Webcam
+            ref={webcamRef}
+            audio={false}
+            screenshotFormat="image/jpeg"
+            videoConstraints={{ width: 640, height: 480, facingMode: 'user' }}
+            className="webcam-video"
+          />
+          <div className="controls-row">
+            <button onClick={handleGoWelcome} className="btn btn-primary">Iniciar reconocimiento</button>
+            <button onClick={onShowRegister} className="btn btn-secondary">Registrar usuario</button>
+          </div>
+        </div>
 
-      <div className="webcam-container">
-        <Webcam
-          ref={webcamRef}
-          audio={false}
-          screenshotFormat="image/jpeg"
-          videoConstraints={{ width: 640, height: 480, facingMode: 'user' }}
-        />
-
-        <div className="controls">
-          <button onClick={handleGoWelcome} className="btn-primary">
-            Iniciar Reconocimiento
-          </button>
-          <button onClick={onShowRegister} className="btn-secondary" style={{ marginLeft: 8 }}>
-            Registrar usuario
-          </button>
+        <div className="card instructions-card">
+          <h3 style={{ marginTop: 0 }}>Instrucciones</h3>
+          <ul className="list">
+            <li>Asegúrate de tener buena iluminación.</li>
+            <li>Colócate frente a la cámara.</li>
+            <li>Mantén un fondo neutro.</li>
+            <li>Evita accesorios que oculten tu rostro.</li>
+          </ul>
         </div>
       </div>
-
-      <div className="instructions">
-        <h3>Instrucciones:</h3>
-        <ul>
-          <li>Asegúrate de tener buena iluminación</li>
-          <li>Colócate frente a la cámara</li>
-          <li>Mantén un fondo neutro</li>
-          <li>Elimina cualquier accesorio que oculte tu rostro</li>
-        </ul>
-      </div>
-    </div>
+    </main>
   )
 }
 

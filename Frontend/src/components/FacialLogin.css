@@ -5,8 +5,8 @@
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #ffffff;
+    color: #374151;
   }
   
   .facial-login-container h1 {
@@ -20,22 +20,36 @@
     opacity: 0.9;
   }
   
-  .webcam-container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
+  .webcam-card {
     display: flex;
     flex-direction: column;
+    gap: 14px;
     align-items: center;
-    margin-bottom: 30px;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   }
   
-  .webcam-container video {
-    border-radius: 10px;
-    margin-bottom: 20px;
-    max-width: 100%;
+  body {
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .webcam-video {
+    width: 100%;
+    max-width: 720px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+  }
+  
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
   }
   
   .controls {
@@ -72,15 +86,50 @@
     transform: translateY(-2px);
   }
   
-  .message {
-    padding: 15px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    margin-top: 15px;
-    text-align: center;
-    font-weight: 500;
+  .instructions-card {
+    margin-top: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 500px;
   }
   
+  .instructions-card h3 {
+    margin-top: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+  }
+  
+  .list {
+    margin: 8px 0 0;
+    padding-left: 18px;
+  }
+  
+  .list li { 
+    margin-bottom: 6px; 
+    color: #374151; 
+  }
+
+/* ---- Captura en Register ---- */
+.capture-row { display: flex; justify-content: center; }
+.capture-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.preview-img {
+  width: 240px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  display: block;
+}
+
+.capture-btn {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
   .loading {
     font-size: 1.2rem;
     display: flex;
@@ -89,25 +138,21 @@
     height: 200px;
   }
   
-  .instructions {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
+  .message {
+    padding: 15px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  /* Contenedor principal tipo tarjeta para la página */
+  .page-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     padding: 20px;
-    max-width: 500px;
-  }
-  
-  .instructions h3 {
-    margin-top: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding-bottom: 10px;
-  }
-  
-  .instructions ul {
-    text-align: left;
-  }
-  
-  .instructions li {
-    margin-bottom: 8px;
-    opacity: 0.9;
+    box-shadow: 0 14px 40px rgba(16, 185, 129, 0.45);
+    border: 1px solid rgba(16, 185, 129, 0.35);
   }
