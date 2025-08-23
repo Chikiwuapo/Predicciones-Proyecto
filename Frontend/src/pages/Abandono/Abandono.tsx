@@ -1,25 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   FaUserGraduate, 
   FaChartLine, 
   FaHistory, 
-  FaWineBottle, 
   FaArrowRight, 
-  FaCheck, 
-  FaExclamationTriangle, 
   FaInfoCircle,
   FaVenusMars,
-  FaHome,
   FaMoneyBillWave,
   FaMapMarkerAlt,
-  FaClock,
-  FaCheckCircle,
-  FaTimesCircle
+  FaClock
 } from 'react-icons/fa';
 import styles from './Abandono.module.css';
 
 type Gender = 'M' | 'F' | 'O' | '';
+type RiskLevel = 'Alto' | 'Medio' | 'Bajo';
 
 interface StudentForm {
   age: string;
@@ -33,11 +28,23 @@ interface StudentForm {
   extraEducationalSupport: boolean;
 }
 
+interface StudentAnalysis {
+  id: string;
+  date: string;
+  risk: RiskLevel;
+  confidence: number;
+  parameters: StudentForm;
+}
+
 export default function Abandono() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('nuevo');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{risk: 'Alto' | 'Medio' | 'Bajo'; confidence: number} | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [history, setHistory] = useState<StudentAnalysis[]>([]);
+  const historyRef = useRef<HTMLDivElement | null>(null);
+  const [pendingScrollToHistory, setPendingScrollToHistory] = useState(false);
   
   const [formData, setFormData] = useState<StudentForm>({
     age: '',
@@ -60,26 +67,28 @@ export default function Abandono() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const runAnalysis = async () => {
     setIsLoading(true);
-    
     try {
-      // Simulación de llamada a la API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Resultado simulado basado en los datos del formulario
       const riskScore = Math.random();
       const riskLevel = riskScore > 0.7 ? 'Alto' : riskScore > 0.4 ? 'Medio' : 'Bajo';
-      const confidence = Math.floor(Math.random() * 20) + 80; // 80-100%
-      
-      setResult({
-        risk: riskLevel,
-        confidence
-      });
-      
-      // Cambiar a la pestaña de resultados
-      setActiveTab('resultado');
+      const confidence = Math.floor(Math.random() * 20) + 80;
+      setResult({ risk: riskLevel as RiskLevel, confidence });
+
+      // Guardar entrada en historial (mock)
+      const entry: StudentAnalysis = {
+        id: String(Date.now()),
+        date: new Date().toLocaleString(),
+        risk: riskLevel as RiskLevel,
+        confidence,
+        parameters: { ...formData },
+      };
+      setHistory(prev => [entry, ...prev]);
+
+      // Ir a historial y preparar scroll suave
+      setActiveTab('historial');
+      setPendingScrollToHistory(true);
     } catch (error) {
       console.error('Error al analizar el riesgo:', error);
       alert('Ocurrió un error al procesar la solicitud');
@@ -87,15 +96,26 @@ export default function Abandono() {
       setIsLoading(false);
     }
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setConfirmOpen(true);
+  };
   
   const handleNewAnalysis = () => {
     setResult(null);
     setActiveTab('nuevo');
   };
-  
-  const navigateToVinos = () => {
-    navigate('/clasificacion-vinos');
-  };
+
+  // Hacer scroll cuando abrimos historial tras análisis
+  useEffect(() => {
+    if (activeTab === 'historial' && pendingScrollToHistory) {
+      requestAnimationFrame(() => {
+        historyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setPendingScrollToHistory(false);
+      });
+    }
+  }, [activeTab, pendingScrollToHistory]);
 
   return (
     <div className={styles.container}>
@@ -106,10 +126,10 @@ export default function Abandono() {
         </div>
         <button 
           className={styles.navButton}
-          onClick={() => navigate('/clasificacion-vinos')}
+          onClick={() => navigate('/estadisticas')}
         >
-          <FaWineBottle className={styles.buttonIcon} />
-          <span>Ir a Clasificación de Vinos</span>
+          <FaChartLine className={styles.buttonIcon} />
+          <span>Ir a Estadísticas globales</span>
           <FaArrowRight className={styles.buttonIcon} />
         </button>
       </header>
@@ -224,7 +244,7 @@ export default function Abandono() {
                     onChange={handleChange}
                     min="10" 
                     max="30" 
-                    placeholder="16" 
+                    placeholder="Ingrese edad" 
                     required
                   />
                 </div>
@@ -287,13 +307,6 @@ export default function Abandono() {
             
             <div className={styles.actions}>
               <button 
-                type="button" 
-                className={styles.secondaryButton}
-                onClick={navigateToVinos}
-              >
-                Ir a Vinos
-              </button>
-              <button 
                 type="submit" 
                 className={styles.primaryButton}
                 disabled={isLoading}
@@ -314,21 +327,88 @@ export default function Abandono() {
           </form>
         )}
         
-        {activeTab === 'resultado' && result && (
-          <div className={`${styles.card} ${styles.resultCard} ${styles[`risk${result.risk}`]}`}>
+        
+        
+        {activeTab === 'historial' && (
+          <div className={styles.historyContainer} ref={historyRef}>
+            <div className={styles.historyHeader}>
+              <h2>Historial de Análisis</h2>
+              <button 
+                onClick={handleNewAnalysis}
+                className={styles.secondaryButton}
+              >
+                Nuevo Análisis
+              </button>
+            </div>
+
+            {history.length > 0 ? (
+              <div className={styles.historyList}>
+                {history.map(item => (
+                  <div key={item.id} className={styles.historyCard}>
+                    <div className={styles.historyCardHeader}>
+                      <span className={styles.historyDate}>{item.date}</span>
+                      <span className={`${styles.riskBadge} ${styles[`risk${item.risk}`]}`}>
+                        {item.risk}
+                      </span>
+                      <span className={styles.confidenceBadge}>{item.confidence}% de confianza</span>
+                    </div>
+                    <div className={styles.historyDetails}>
+                      <div className={styles.parameterGrid}>
+                        <div className={styles.parameterItem}>
+                          <span>Tiempo de estudio:</span>
+                          <span>{item.parameters.studyTime} h/sem</span>
+                        </div>
+                        <div className={styles.parameterItem}>
+                          <span>Ingresos:</span>
+                          <span>{item.parameters.familyIncome}</span>
+                        </div>
+                        <div className={styles.parameterItem}>
+                          <span>Ubicación:</span>
+                          <span>{item.parameters.location}</span>
+                        </div>
+                        <div className={styles.parameterItem}>
+                          <span>Edad:</span>
+                          <span>{item.parameters.age}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.noHistory}>
+                <p>No hay análisis guardados en el historial.</p>
+                <button onClick={handleNewAnalysis} className={styles.primaryButton}>Realizar primer análisis</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mostrar resultado también en la pestaña de historial, con layout estilo Vinos */}
+        {activeTab === 'historial' && result && (
+          <div className={styles.resultContainer}>
             <h2>Resultado del Análisis</h2>
-            <div className={styles.resultContent}>
-              <div className={styles.riskLevel}>
-                <span>Nivel de Riesgo:</span>
-                <strong>{result.risk}</strong>
+            <div className={`${styles.resultCard} ${styles[`result${result.risk}`]}`}>
+              <div className={styles.resultHeader}>
+                <h3>Riesgo de Abandono</h3>
+                <div className={styles.resultQuality}>
+                  <span>Nivel:</span>
+                  <strong>{result.risk}</strong>
+                </div>
+                <div className={styles.resultConfidence}>
+                  <span>Confianza:</span>
+                  <strong>{result.confidence}%</strong>
+                </div>
               </div>
-              <div className={styles.confidence}>
-                <span>Confianza:</span>
-                <strong>{result.confidence}%</strong>
+
+              <div className={styles.resultMessage}>
+                {result.risk === 'Bajo' && 'Riesgo bajo. El estudiante presenta condiciones favorables.'}
+                {result.risk === 'Medio' && 'Riesgo medio. Se recomienda monitoreo y apoyo preventivo.'}
+                {result.risk === 'Alto' && 'Riesgo alto. Requiere intervención y plan de apoyo inmediato.'}
               </div>
-              
+
               <div className={styles.recommendations}>
-                <h3>Recomendaciones:</h3>
+                <h4>Recomendaciones:</h4>
                 {result.risk === 'Alto' ? (
                   <ul>
                     <li>Sesión de asesoramiento con el departamento de orientación</li>
@@ -349,42 +429,63 @@ export default function Abandono() {
                   </ul>
                 )}
               </div>
-              
-              <div className={styles.actions}>
-                <button 
-                  type="button" 
-                  className={styles.secondaryButton}
-                  onClick={handleNewAnalysis}
-                >
-                  Nuevo Análisis
-                </button>
-                <button 
-                  type="button" 
-                  className={styles.primaryButton}
-                  onClick={() => setActiveTab('historial')}
-                >
-                  Ver Historial
-                </button>
+            </div>
+
+            <div className={styles.analysisDetails}>
+              <h3>Detalles del Análisis</h3>
+              <div className={styles.detailsGrid}>
+                <div className={styles.detailItem}>
+                  <span>Tiempo de estudio:</span>
+                  <span>{formData.studyTime || '-'} h/sem</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <span>Ingresos familiares:</span>
+                  <span>{formData.familyIncome || '-'}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <span>Ubicación:</span>
+                  <span>{formData.location || '-'}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <span>Edad:</span>
+                  <span>{formData.age || '-'}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <span>Apoyo escolar:</span>
+                  <span>{formData.schoolSupport ? 'Sí' : 'No'}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <span>Apoyo familiar:</span>
+                  <span>{formData.familySupport ? 'Sí' : 'No'}</span>
+                </div>
+                <div className={styles.detailItem}>
+                  <span>Clases particulares:</span>
+                  <span>{formData.extraEducationalSupport ? 'Sí' : 'No'}</span>
+                </div>
               </div>
             </div>
           </div>
         )}
-        
-        {activeTab === 'historial' && (
-          <div className={styles.card}>
-            <h2>Historial de Análisis</h2>
-            <div className={styles.emptyState}>
-              <p>No hay análisis recientes</p>
-              <button 
-                className={styles.primaryButton}
-                onClick={() => setActiveTab('nuevo')}
-              >
-                Realizar Nuevo Análisis
-              </button>
+      </div>
+      {/* Modal de confirmación */}
+
+      {confirmOpen && (
+        <div className={styles.modalOverlay} role="dialog" aria-modal="true" onClick={() => setConfirmOpen(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3>Confirmar análisis</h3>
+              <button className={styles.modalClose} aria-label="Cerrar" onClick={() => setConfirmOpen(false)}>×</button>
+            </div>
+            <div className={styles.modalBody}>
+              <p>¿Deseas proceder con el análisis de abandono con los datos ingresados?</p>
+            </div>
+            <div className={styles.modalActions}>
+              <button className={styles.secondaryButton} onClick={() => setConfirmOpen(false)}>Cancelar</button>
+              <button className={styles.confirmButton} onClick={() => { setConfirmOpen(false); runAnalysis(); }}>Confirmar</button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

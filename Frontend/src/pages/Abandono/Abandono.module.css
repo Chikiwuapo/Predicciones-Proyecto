@@ -87,6 +87,13 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   border: 1px solid var(--stroke);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--neon);
+  box-shadow: 0 10px 24px rgba(245, 166, 35, 0.15);
 }
 
 .card h2 {
@@ -120,6 +127,7 @@
 
 .formGroup input,
 .formGroup select {
+  width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--stroke);
   border-radius: 4px;
@@ -199,11 +207,11 @@
   background: transparent;
   color: var(--neon);
   border: 1px solid var(--neon);
-  padding: 9px 18px;
+  padding: 10px 20px;
   border-radius: 4px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease, color .16s ease;
   text-transform: uppercase;
   font-size: 13px;
   letter-spacing: 0.5px;
@@ -212,6 +220,7 @@
 .secondaryButton:hover {
   background: rgba(245, 166, 35, 0.12);
   box-shadow: 0 0 15px rgba(245, 166, 35, 0.12);
+  transform: translateY(-1px);
 }
 
 /* Result Card Styles */
@@ -219,6 +228,12 @@
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .resultCard::before {
@@ -231,17 +246,22 @@
   background: var(--neon);
 }
 
-.resultCard.riskAlto::before {
-  background: #ff4d4f;
+/* New themed variants like Vinos */
+.resultCard.resultAlto::before { background: #f44336; }
+.resultCard.resultMedio::before { background: #ffab00; }
+.resultCard.resultBajo::before { background: #00c853; }
+
+/* Add colored glow based on result */
+.resultAlto {
+  box-shadow: 0 0 0 1px rgba(244, 67, 54, 0.15) inset, 0 4px 14px rgba(244, 67, 54, 0.12);
+}
+.resultMedio {
+  box-shadow: 0 0 0 1px rgba(255, 171, 0, 0.15) inset, 0 4px 14px rgba(255, 171, 0, 0.12);
+}
+.resultBajo {
+  box-shadow: 0 0 0 1px rgba(0, 200, 83, 0.15) inset, 0 4px 14px rgba(0, 200, 83, 0.12);
 }
 
-.resultCard.riskMedio::before {
-  background: #faad14;
-}
-
-.resultCard.riskBajo::before {
-  background: #52c41a;
-}
 
 .resultContent {
   padding: 20px 0;
@@ -276,18 +296,25 @@
   font-size: 18px;
 }
 
+/* Color the level text according to risk */
+.resultAlto .resultQuality strong { color: #f44336; }
+.resultMedio .resultQuality strong { color: #ffab00; }
+.resultBajo .resultQuality strong { color: #00c853; }
+
 .recommendations {
   margin: 25px 0;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  border-left: 3px solid var(--neon);
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  border-left: none;
+  box-shadow: none;
 }
 
-.recommendations h3 {
+.recommendations h4 {
   margin-top: 0;
   margin-bottom: 15px;
   color: var(--neon);
+  text-transform: uppercase;
   font-size: 16px;
 }
 
@@ -302,6 +329,113 @@
   line-height: 1.5;
   color: var(--text);
   opacity: 0.9;
+}
+
+/* Tinted message per risk (use .resultMessage defined earlier) */
+.resultAlto .resultMessage {
+  background: rgba(244, 67, 54, 0.10);
+  border-color: rgba(244, 67, 54, 0.25);
+}
+
+.resultMedio .resultMessage {
+  background: rgba(255, 171, 0, 0.10);
+  border-color: rgba(255, 171, 0, 0.25);
+}
+
+.resultBajo .resultMessage {
+  background: rgba(0, 200, 83, 0.10);
+  border-color: rgba(0, 200, 83, 0.25);
+}
+
+/* New layout pieces to mirror Vinos */
+.resultContainer h2 {
+  margin: 20px 0 12px;
+}
+
+.resultHeader {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.resultHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--neon);
+}
+
+.resultQuality,
+.resultConfidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.resultQuality strong {
+  font-size: 18px;
+  color: var(--neon);
+}
+
+.resultConfidence {
+  font-size: 13px;
+  justify-self: end;
+}
+
+/* Center Nivel and align Confianza to the right */
+.resultQuality { justify-self: center; }
+.resultConfidence { justify-self: end; }
+.resultConfidence span { color: var(--muted); }
+.resultConfidence strong { color: var(--text); font-weight: 700; }
+
+.resultMessage {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--stroke);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.analysisDetails {
+  margin-top: 25px;
+}
+
+.analysisDetails h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--neon);
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  background: var(--bg-2);
+  padding: 0;
+  border-radius: 6px;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.detailItem span:first-child {
+  color: var(--muted);
 }
 
 /* Empty State */
@@ -374,13 +508,189 @@
 
 .secondaryButton {
   background: transparent;
-  border: 1px solid var(--stroke);
-  color: var(--text);
+  border: 1px solid var(--neon);
+  color: var(--neon);
 }
 
 .secondaryButton:hover {
   border-color: var(--neon);
   color: var(--neon);
+}
+
+/* Keep label icon color untouched */
+.inputIcon {
+  /* do not set color to preserve current theme icon color */
+  margin-right: 6px;
+}
+
+/* Ensure input/select layout wrappers */
+.inputWrapper,
+.selectWrapper {
+  display: flex;
+  align-items: center;
+}
+
+/* Native select like combobox styling */
+.selectWrapper select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M5.5 7.5L10 12l4.5-4.5' stroke='%23A1A1AA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  padding-right: 36px;
+}
+
+/* Header navigation button and icons */
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+
+.navButton:hover {
+  background: rgba(245, 166, 35, 0.08);
+  border-color: var(--neon);
+  box-shadow: 0 6px 18px rgba(245, 166, 35, 0.18);
+  transform: translateY(-1px);
+}
+
+.buttonIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Info icon button inside inputs */
+.infoButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-left: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--muted);
+  transition: background .16s ease, color .16s ease, box-shadow .16s ease, transform .16s ease, border-color .16s ease;
+}
+
+.infoButton:hover {
+  color: var(--accent-contrast);
+  background: var(--neon);
+  border-color: var(--neon);
+  box-shadow: 0 6px 16px rgba(245, 166, 35, 0.25);
+  transform: translateY(-1px);
+}
+
+.infoIcon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Modal base */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  animation: fadeIn .18s ease both;
+}
+
+.modal {
+  width: min(560px, 96vw);
+  background: var(--bg-1);
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  overflow: hidden;
+  transform-origin: center;
+  animation: popIn .2s ease both;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.modalClose {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--text);
+  line-height: 1;
+  transition: background .16s ease, transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+.modalClose:hover {
+  background: rgba(245, 166, 35, 0.12);
+  border-color: var(--neon);
+  box-shadow: 0 6px 16px rgba(245, 166, 35, 0.18);
+  transform: translateY(-1px);
+}
+
+.modalBody {
+  padding: 16px;
+  color: var(--text);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 16px 16px;
+}
+
+.confirmButton {
+  background: var(--neon);
+  color: #000;
+  border: 1px solid var(--neon);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+
+.confirmButton:hover {
+  background: #e09517;
+  border-color: #e09517;
+  box-shadow: 0 10px 24px rgba(245, 166, 35, 0.25);
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.98); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .emptyState {
@@ -411,4 +721,105 @@
     flex: 1;
     text-align: center;
   }
+}
+
+/* History Styles (match Vinos look & feel) */
+.historyContainer {
+  width: 100%;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.historyCard {
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  padding: 15px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.historyCard:hover {
+  border-color: var(--neon);
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.18);
+  transform: translateY(-2px);
+}
+
+.historyCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.historyDate {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.riskBadge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.riskAlto {
+  background: rgba(244, 67, 54, 0.15);
+  color: #f44336;
+}
+
+.riskMedio {
+  background: rgba(255, 171, 0, 0.15);
+  color: #ffab00;
+}
+
+.riskBajo {
+  background: rgba(0, 200, 83, 0.15);
+  color: #00c853;
+}
+
+.confidenceBadge {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.parameterGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.parameterItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+.parameterItem span:first-child {
+  color: var(--muted);
+}
+
+.noHistory {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  border: 1px dashed var(--stroke);
+  border-radius: 6px;
 }
