@@ -721,6 +721,20 @@
     flex: 1;
     text-align: center;
   }
+  .historyHeader {
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
+  }
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filtersBar {
+    width: 100%;
+  }
 }
 
 /* History Styles (match Vinos look & feel) */
@@ -735,10 +749,117 @@
   margin-bottom: 20px;
 }
 
+/* Inline filters within history header */
+.filtersBar {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-2);
+  padding: 10px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.filterLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  background: transparent;
+}
+
+.filterLabel span {
+  color: var(--muted);
+}
+
+/* Hover/focus glow for the whole bar */
+/* Keep the bar subtle; main glow is per control */
+.filtersBar:hover,
+.filtersBar:focus-within {
+  border-color: var(--neon);
+  box-shadow: 0 0 0 1px rgba(245, 166, 35, 0.18);
+}
+
+/* Prettier controls inside filters bar */
+.filtersBar .selectWrapper select,
+.filtersBar .inputWrapper input[type="date"],
+.filtersBar .inputWrapper input[type="text"],
+.filtersBar .inputWrapper input[type="search"] {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease, transform .16s ease;
+}
+
+.filtersBar .selectWrapper select:hover,
+.filtersBar .inputWrapper input:hover {
+  border-color: var(--neon);
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.18);
+}
+
+.filtersBar .selectWrapper select:focus,
+.filtersBar .inputWrapper input:focus {
+  outline: none;
+  border-color: var(--neon);
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.25);
+}
+
+/* Ensure consistent min sizes */
+.filtersBar .selectWrapper select { min-width: 120px; }
+.filtersBar .inputWrapper input { min-width: 160px; }
+
+.clearButton {
+  background: #fff;
+  color: #000;
+  border: 1px solid #e5e7eb;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, color .16s ease, background .16s ease;
+}
+
+.clearButton:hover {
+  background: #fff;
+  border-color: var(--neon);
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.18);
+  transform: translateY(-1px);
+}
+
 .historyList {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+/* Scrollable history container */
+.historyScroll {
+  max-height: 420px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.historyScroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.historyScroll::-webkit-scrollbar-thumb {
+  background: rgba(245, 166, 35, 0.35);
+  border-radius: 8px;
+}
+
+.historyScroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .historyCard {
@@ -747,6 +868,7 @@
   border-radius: 6px;
   padding: 15px;
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  cursor: pointer;
 }
 
 .historyCard:hover {
@@ -822,4 +944,40 @@
   color: var(--muted);
   border: 1px dashed var(--stroke);
   border-radius: 6px;
+}
+
+/* Pagination controls */
+.paginationBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.pageButton {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: rgba(245, 166, 35, 0.08);
+  border-color: var(--neon);
+  box-shadow: 0 6px 16px rgba(245, 166, 35, 0.18);
+  transform: translateY(-1px);
+}
+
+.pageButton:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 13px;
+  color: var(--muted);
 }

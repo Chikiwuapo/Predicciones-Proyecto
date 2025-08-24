@@ -17,6 +17,7 @@ type WineQuality = 'Baja' | 'Media' | 'Alta' | '';
 interface WineAnalysis {
   id: string;
   date: string;
+  dateKey?: string; // yyyy-mm-dd para filtrado confiable
   quality: WineQuality;
   confidence: number;
   parameters: typeof initialFormData;
@@ -44,9 +45,14 @@ export default function Vinos() {
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<WineAnalysis[]>([]);
   const historyRef = useRef<HTMLDivElement | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
   const [pendingScrollToHistory, setPendingScrollToHistory] = useState(false);
   const [infoModal, setInfoModal] = useState<{open: boolean; title: string; content: string}>({ open: false, title: '', content: '' });
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [qualityFilter, setQualityFilter] = useState<WineQuality | 'Todas'>('Todas');
+  const [dateFilter, setDateFilter] = useState<string>(''); // yyyy-mm-dd
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 6;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,6 +61,36 @@ export default function Vinos() {
       ...prev,
       [name]: numValue
     }));
+  };
+
+  // Normaliza una fecha a yyyy-mm-dd. Usa dateKey si está disponible.
+  const toISODate = (input: string, key?: string): string => {
+    if (key) return key;
+    if (!input) return '';
+    // 1) Intento directo con Date
+    const d = new Date(input);
+    if (!isNaN(d.getTime())) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+    // 2) Parseo manual dd/mm/yyyy o dd-mm-yyyy (con o sin hora)
+    const m1 = input.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);
+    if (m1) {
+      let dd = parseInt(m1[1], 10);
+      let mm = parseInt(m1[2], 10);
+      let yyyy = parseInt(m1[3].length === 2 ? `20${m1[3]}` : m1[3], 10);
+      // Asumir formato día/mes/año por locales ES
+      if (dd > 31 || mm > 12) {
+        // fallback: intercambiar si parece mm/dd/yyyy
+        [dd, mm] = [mm, dd];
+      }
+      const mmS = String(mm).padStart(2, '0');
+      const ddS = String(dd).padStart(2, '0');
+      return `${yyyy}-${mmS}-${ddS}`;
+    }
+    return '';
   };
 
   const runAnalysis = async () => {
@@ -75,9 +111,14 @@ export default function Vinos() {
       });
 
       // Opcional: agregar entrada rápida al historial (mock) para ejemplificar
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
       const newItem: WineAnalysis = {
         id: String(Date.now()),
-        date: new Date().toLocaleString(),
+        date: now.toLocaleString(),
+        dateKey: `${yyyy}-${mm}-${dd}`,
         quality: randomQuality,
         confidence: randomConfidence,
         parameters: { ...formData },
@@ -111,11 +152,59 @@ export default function Vinos() {
     if (activeTab === 'historial' && pendingScrollToHistory) {
       // dar un frame para montar el DOM
       requestAnimationFrame(() => {
-        historyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Priorizar el bloque de resultados si existe, de lo contrario ir al inicio del historial
+        const target = resultRef.current ?? historyRef.current;
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setPendingScrollToHistory(false);
       });
     }
-  }, [activeTab, pendingScrollToHistory]);
+  }, [activeTab, pendingScrollToHistory, result]);
+
+  // Persistencia de filtros en localStorage
+  useEffect(() => {
+    // Cargar al montar
+    try {
+      const stored = localStorage.getItem('vinos.filters');
+      if (stored) {
+        const parsed = JSON.parse(stored) as { quality?: WineQuality | 'Todas'; date?: string; fromDate?: string; toDate?: string };
+        if (parsed.quality) setQualityFilter(parsed.quality);
+        // Compatibilidad: usar 'date' si existe; si no, intentar fromDate
+        if (typeof parsed.date === 'string') setDateFilter(parsed.date);
+        else if (typeof parsed.fromDate === 'string') setDateFilter(parsed.fromDate);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('vinos.filters', JSON.stringify({ quality: qualityFilter, date: dateFilter }));
+    } catch {}
+  }, [qualityFilter, dateFilter]);
+
+  // Reiniciar a la primera página al cambiar filtros o tamaño del historial
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [qualityFilter, dateFilter, history.length]);
+
+  // Historial filtrado (se usa para paginación)
+  const filteredHistory = history.filter((item) => {
+    const byQuality = qualityFilter === 'Todas' || item.quality === qualityFilter;
+    if (!byQuality) return false;
+    if (!dateFilter) return true;
+    const itemISO = toISODate(item.date, item.dateKey);
+    return itemISO === dateFilter;
+  });
+
+  // Al seleccionar un registro, mostrar su información en el resultado
+  const handleSelectHistory = (item: WineAnalysis) => {
+    setFormData({ ...item.parameters });
+    setResult({ quality: item.quality, confidence: item.confidence });
+    setActiveTab('historial');
+    // Desplazar al resultado después de renderizar
+    setTimeout(() => {
+      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
+  };
 
   return (
     <div className={styles.container}>
@@ -460,46 +549,116 @@ export default function Vinos() {
           <div className={styles.historyContainer} ref={historyRef}>
             <div className={styles.historyHeader}>
               <h2>Historial de Análisis</h2>
-              <button 
-                onClick={handleNewAnalysis}
-                className={styles.secondaryButton}
-              >
-                Nuevo Análisis
-              </button>
+              <div className={styles.historyActions}>
+                <div className={styles.filtersBar}>
+                  <div className={styles.filterItem}>
+                    <label>Calidad</label>
+                    <select
+                      value={qualityFilter}
+                      onChange={(e) => setQualityFilter(e.target.value as any)}
+                    >
+                      <option value="Todas">Todas</option>
+                      <option value="Alta">Alta</option>
+                      <option value="Media">Media</option>
+                      <option value="Baja">Baja</option>
+                    </select>
+                  </div>
+                  <div className={styles.filterItem}>
+                    <label>Fecha</label>
+                    <input
+                      type="date"
+                      value={dateFilter}
+                      onChange={(e) => setDateFilter(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    className={styles.clearFilters}
+                    type="button"
+                    onClick={() => { setQualityFilter('Todas'); setDateFilter(''); }}
+                  >
+                    Limpiar
+                  </button>
+                </div>
+                <button 
+                  onClick={handleNewAnalysis}
+                  className={styles.secondaryButton}
+                >
+                  Nuevo Análisis
+                </button>
+              </div>
             </div>
             
-            {history.length > 0 ? (
-              <div className={styles.historyList}>
-                {history.map((item) => (
-                  <div key={item.id} className={styles.historyCard}>
-                    <div className={styles.historyCardHeader}>
-                      <span className={styles.historyDate}>{item.date}</span>
-                      <span className={`${styles.qualityBadge} ${styles[`quality${item.quality}`]}`}>
-                        {item.quality}
-                      </span>
-                      <span className={styles.confidenceBadge}>
-                        {item.confidence}% de confianza
-                      </span>
-                    </div>
-                    <div className={styles.historyDetails}>
-                      <div className={styles.parameterGrid}>
-                        <div className={styles.parameterItem}>
-                          <span>Acidez fija:</span>
-                          <span>{item.parameters.fixedAcidity} g/dm³</span>
-                        </div>
-                        <div className={styles.parameterItem}>
-                          <span>Alcohol:</span>
-                          <span>{item.parameters.alcohol}% vol</span>
-                        </div>
-                        <div className={styles.parameterItem}>
-                          <span>pH:</span>
-                          <span>{item.parameters.pH}</span>
-                        </div>
-                      </div>
-                    </div>
+            {filteredHistory.length > 0 ? (
+              <>
+                <div className={styles.historyScroll}>
+                  <div className={styles.historyList}>
+                    {filteredHistory
+                      .slice((currentPage - 1) * itemsPerPage, (currentPage) * itemsPerPage)
+                      .map((item, idx) => {
+                        const globalIdx = (currentPage - 1) * itemsPerPage + idx;
+                        return (
+                          <div
+                            key={item.id}
+                            className={styles.historyCard}
+                            style={{ animationDelay: `${globalIdx * 50}ms` }}
+                            onClick={() => handleSelectHistory(item)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelectHistory(item); } }}
+                            aria-label={`Ver análisis del ${item.date}`}
+                          >
+                            <div className={styles.historyCardHeader}>
+                              <span className={styles.historyDate}>{item.date}</span>
+                              <span className={`${styles.qualityBadge} ${styles[`quality${item.quality}`]}`}>
+                                {item.quality}
+                              </span>
+                              <span className={styles.confidenceBadge}>
+                                {item.confidence}% de confianza
+                              </span>
+                            </div>
+                            <div className={styles.historyDetails}>
+                              <div className={styles.parameterGrid}>
+                                <div className={styles.parameterItem}>
+                                  <span>Acidez fija:</span>
+                                  <span>{item.parameters.fixedAcidity} g/dm³</span>
+                                </div>
+                                <div className={styles.parameterItem}>
+                                  <span>Alcohol:</span>
+                                  <span>{item.parameters.alcohol}% vol</span>
+                                </div>
+                                <div className={styles.parameterItem}>
+                                  <span>pH:</span>
+                                  <span>{item.parameters.pH}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
-                ))}
-              </div>
+                </div>
+                <div className={styles.paginationBar}>
+                  <button
+                    className={styles.pageButton}
+                    type="button"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  >
+                    Anterior
+                  </button>
+                  <span className={styles.pageInfo}>
+                    Página {currentPage} de {Math.max(1, Math.ceil(filteredHistory.length / itemsPerPage))}
+                  </span>
+                  <button
+                    className={styles.pageButton}
+                    type="button"
+                    disabled={currentPage >= Math.ceil(filteredHistory.length / itemsPerPage)}
+                    onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredHistory.length / itemsPerPage) || 1, p + 1))}
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              </>
             ) : (
               <div className={styles.noHistory}>
                 <p>No hay análisis guardados en el historial.</p>
@@ -516,7 +675,7 @@ export default function Vinos() {
         
         {/* Mostrar resultados si estamos en la pestaña de historial y hay un análisis seleccionado */}
         {activeTab === 'historial' && result && (
-          <div className={styles.resultContainer}>
+          <div className={styles.resultContainer} ref={resultRef}>
             <h2>Resultado del Análisis</h2>
             <div className={`${styles.resultCard} ${styles[`result${result.quality}`]}`}>
               <div className={styles.resultHeader}>

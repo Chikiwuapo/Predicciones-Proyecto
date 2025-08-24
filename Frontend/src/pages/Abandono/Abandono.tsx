@@ -44,7 +44,13 @@ export default function Abandono() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [history, setHistory] = useState<StudentAnalysis[]>([]);
   const historyRef = useRef<HTMLDivElement | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
   const [pendingScrollToHistory, setPendingScrollToHistory] = useState(false);
+  // Filtros y paginación
+  const [riskFilter, setRiskFilter] = useState<RiskLevel | 'Todos'>('Todos');
+  const [dateFilter, setDateFilter] = useState<string>(''); // yyyy-mm-dd
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 6;
   
   const [formData, setFormData] = useState<StudentForm>({
     age: '',
@@ -65,6 +71,29 @@ export default function Abandono() {
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
+  };
+
+  // Normaliza una fecha a yyyy-mm-dd para filtrado
+  const toISODate = (input: string): string => {
+    if (!input) return '';
+    const d = new Date(input);
+    if (!isNaN(d.getTime())) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+    const m1 = input.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);
+    if (m1) {
+      let dd = parseInt(m1[1], 10);
+      let mm = parseInt(m1[2], 10);
+      let yyyy = parseInt(m1[3].length === 2 ? `20${m1[3]}` : m1[3], 10);
+      if (dd > 31 || mm > 12) [dd, mm] = [mm, dd];
+      const mmS = String(mm).padStart(2, '0');
+      const ddS = String(dd).padStart(2, '0');
+      return `${yyyy}-${mmS}-${ddS}`;
+    }
+    return '';
   };
 
   const runAnalysis = async () => {
@@ -111,11 +140,54 @@ export default function Abandono() {
   useEffect(() => {
     if (activeTab === 'historial' && pendingScrollToHistory) {
       requestAnimationFrame(() => {
-        historyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const target = resultRef.current ?? historyRef.current;
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setPendingScrollToHistory(false);
       });
     }
-  }, [activeTab, pendingScrollToHistory]);
+  }, [activeTab, pendingScrollToHistory, result]);
+
+  // Cargar filtros de localStorage al montar
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('abandono.filters');
+      if (stored) {
+        const parsed = JSON.parse(stored) as { risk?: RiskLevel | 'Todos'; date?: string };
+        if (parsed.risk) setRiskFilter(parsed.risk);
+        if (typeof parsed.date === 'string') setDateFilter(parsed.date);
+      }
+    } catch {}
+  }, []);
+
+  // Guardar filtros
+  useEffect(() => {
+    try {
+      localStorage.setItem('abandono.filters', JSON.stringify({ risk: riskFilter, date: dateFilter }));
+    } catch {}
+  }, [riskFilter, dateFilter]);
+
+  // Resetear página cuando cambian los filtros o el tamaño del historial
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [riskFilter, dateFilter, history.length]);
+
+  // Aplicar filtros para paginación
+  const filteredHistory = history.filter((item) => {
+    const byRisk = riskFilter === 'Todos' || item.risk === riskFilter;
+    if (!byRisk) return false;
+    if (!dateFilter) return true;
+    return toISODate(item.date) === dateFilter;
+  });
+
+  // Click en historial: mostrar resultado y desplazar
+  const handleSelectHistory = (item: StudentAnalysis) => {
+    setResult({ risk: item.risk, confidence: item.confidence });
+    setFormData({ ...item.parameters });
+    setActiveTab('historial');
+    setTimeout(() => {
+      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
+  };
 
   return (
     <div className={styles.container}>
@@ -333,48 +405,115 @@ export default function Abandono() {
           <div className={styles.historyContainer} ref={historyRef}>
             <div className={styles.historyHeader}>
               <h2>Historial de Análisis</h2>
-              <button 
-                onClick={handleNewAnalysis}
-                className={styles.secondaryButton}
-              >
-                Nuevo Análisis
-              </button>
+              <div className={styles.headerActions}>
+                <div className={styles.filtersBar}>
+                  <label className={styles.filterLabel}>
+                    <span>RIESGO</span>
+                    <div className={styles.selectWrapper}>
+                      <select value={riskFilter} onChange={(e) => setRiskFilter(e.target.value as RiskLevel | 'Todos')} aria-label="Filtrar por riesgo">
+                        <option value="Todos">Todos</option>
+                        <option value="Alto">Alto</option>
+                        <option value="Medio">Medio</option>
+                        <option value="Bajo">Bajo</option>
+                      </select>
+                    </div>
+                  </label>
+                  <label className={styles.filterLabel}>
+                    <span>FECHA</span>
+                    <div className={styles.inputWrapper}>
+                      <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} aria-label="Filtrar por fecha" />
+                    </div>
+                  </label>
+                  <button
+                    type="button"
+                    className={styles.clearButton}
+                    onClick={() => { setRiskFilter('Todos'); setDateFilter(''); }}
+                  >
+                    LIMPIAR
+                  </button>
+                </div>
+                <button 
+                  onClick={handleNewAnalysis}
+                  className={styles.secondaryButton}
+                >
+                  Nuevo Análisis
+                </button>
+              </div>
             </div>
 
-            {history.length > 0 ? (
-              <div className={styles.historyList}>
-                {history.map(item => (
-                  <div key={item.id} className={styles.historyCard}>
-                    <div className={styles.historyCardHeader}>
-                      <span className={styles.historyDate}>{item.date}</span>
-                      <span className={`${styles.riskBadge} ${styles[`risk${item.risk}`]}`}>
-                        {item.risk}
-                      </span>
-                      <span className={styles.confidenceBadge}>{item.confidence}% de confianza</span>
-                    </div>
-                    <div className={styles.historyDetails}>
-                      <div className={styles.parameterGrid}>
-                        <div className={styles.parameterItem}>
-                          <span>Tiempo de estudio:</span>
-                          <span>{item.parameters.studyTime} h/sem</span>
-                        </div>
-                        <div className={styles.parameterItem}>
-                          <span>Ingresos:</span>
-                          <span>{item.parameters.familyIncome}</span>
-                        </div>
-                        <div className={styles.parameterItem}>
-                          <span>Ubicación:</span>
-                          <span>{item.parameters.location}</span>
-                        </div>
-                        <div className={styles.parameterItem}>
-                          <span>Edad:</span>
-                          <span>{item.parameters.age}</span>
-                        </div>
-                      </div>
-                    </div>
+            {filteredHistory.length > 0 ? (
+              <>
+                <div className={styles.historyScroll}>
+                  <div className={styles.historyList}>
+                    {filteredHistory
+                      .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                      .map((item, idx) => {
+                        const globalIdx = (currentPage - 1) * itemsPerPage + idx;
+                        return (
+                          <div
+                            key={item.id}
+                            className={styles.historyCard}
+                            style={{ animationDelay: `${globalIdx * 50}ms` }}
+                            onClick={() => handleSelectHistory(item)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelectHistory(item); } }}
+                            aria-label={`Ver análisis del ${item.date}`}
+                          >
+                            <div className={styles.historyCardHeader}>
+                              <span className={styles.historyDate}>{item.date}</span>
+                              <span className={`${styles.riskBadge} ${styles[`risk${item.risk}`]}`}>
+                                {item.risk}
+                              </span>
+                              <span className={styles.confidenceBadge}>{item.confidence}% de confianza</span>
+                            </div>
+                            <div className={styles.historyDetails}>
+                              <div className={styles.parameterGrid}>
+                                <div className={styles.parameterItem}>
+                                  <span>Tiempo de estudio:</span>
+                                  <span>{item.parameters.studyTime} h/sem</span>
+                                </div>
+                                <div className={styles.parameterItem}>
+                                  <span>Ingresos:</span>
+                                  <span>{item.parameters.familyIncome}</span>
+                                </div>
+                                <div className={styles.parameterItem}>
+                                  <span>Ubicación:</span>
+                                  <span>{item.parameters.location}</span>
+                                </div>
+                                <div className={styles.parameterItem}>
+                                  <span>Edad:</span>
+                                  <span>{item.parameters.age}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
-                ))}
-              </div>
+                </div>
+                <div className={styles.paginationBar}>
+                  <button
+                    className={styles.pageButton}
+                    type="button"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  >
+                    Anterior
+                  </button>
+                  <span className={styles.pageInfo}>
+                    Página {currentPage} de {Math.max(1, Math.ceil(filteredHistory.length / itemsPerPage))}
+                  </span>
+                  <button
+                    className={styles.pageButton}
+                    type="button"
+                    disabled={currentPage >= Math.ceil(filteredHistory.length / itemsPerPage)}
+                    onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredHistory.length / itemsPerPage) || 1, p + 1))}
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              </>
             ) : (
               <div className={styles.noHistory}>
                 <p>No hay análisis guardados en el historial.</p>
@@ -386,7 +525,7 @@ export default function Abandono() {
 
         {/* Mostrar resultado también en la pestaña de historial, con layout estilo Vinos */}
         {activeTab === 'historial' && result && (
-          <div className={styles.resultContainer}>
+          <div className={styles.resultContainer} ref={resultRef}>
             <h2>Resultado del Análisis</h2>
             <div className={`${styles.resultCard} ${styles[`result${result.risk}`]}`}>
               <div className={styles.resultHeader}>
