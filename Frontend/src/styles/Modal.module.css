@@ -1,0 +1,238 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+/* Estilos base del modal */
+.modal {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 420px;
+  margin: 0 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Tema oscuro */
+.modal.dark {
+  background: #1e293b; /* bg-slate-800 */
+  border: 1px solid rgba(226, 232, 240, 0.1);
+  color: #f8fafc; /* text-slate-50 */
+}
+
+/* Tema claro */
+.modal.light {
+  background: #ffffff;
+  border: 1px solid #e2e8f0; /* border-slate-200 */
+  color: #1e293b; /* text-slate-800 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal.dark .modalHeader {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.modal.light .modalHeader {
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc; /* bg-slate-50 */
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 77, 79, 0.15);
+  color: #ff4d4f;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal.dark .closeButton {
+  color: #f8fafc; /* text-slate-50 */
+}
+
+.modal.light .closeButton {
+  color: #1e293b; /* text-slate-800 */
+}
+
+.modal.dark .closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal.light .closeButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.closeButton:hover {
+  opacity: 1;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.modal.dark .modalHeader h3 {
+  color: #f8fafc; /* text-slate-50 */
+}
+
+.modal.light .modalHeader h3 {
+  color: #1e293b; /* text-slate-800 - Casi negro */
+}
+
+.modalBody {
+  padding: 1.5rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  text-align: center;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.modal.dark .modalBody {
+  color: rgba(248, 250, 252, 0.8); /* text-slate-50 con opacidad */
+}
+
+.modal.light .modalBody {
+  color: #475569; /* text-slate-600 */
+}
+
+.modalFooter {
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.modal.dark .modalFooter {
+  border-top: 1px solid rgba(226, 232, 240, 0.1);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.modal.light .modalFooter {
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc; /* bg-slate-50 */
+}
+
+.button {
+  padding: 0.625rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Botón de confirmar */
+.confirmButton {
+  background-color: #ef4444; /* bg-red-500 */
+  color: white;
+  border: 1px solid #dc2626; /* border-red-600 */
+}
+
+.confirmButton:hover {
+  background-color: #dc2626; /* hover:bg-red-600 */
+  transform: translateY(-1px);
+}
+
+/* Botón de cancelar */
+.cancelButton {
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.modal.dark .cancelButton {
+  background-color: rgba(30, 41, 59, 0.5); /* bg-slate-800 con opacidad */
+  color: #f8fafc; /* text-slate-50 */
+  border-color: rgba(226, 232, 240, 0.2);
+}
+
+.modal.light .cancelButton {
+  background-color: #f1f5f9; /* bg-slate-100 */
+  color: #334155; /* text-slate-700 */
+  border-color: #cbd5e1; /* border-slate-300 */
+}
+
+.modal.dark .cancelButton:hover {
+  background-color: rgba(51, 65, 85, 0.5); /* hover:bg-slate-700 con opacidad */
+  border-color: rgba(226, 232, 240, 0.3);
+}
+
+.modal.light .cancelButton:hover {
+  background-color: #e2e8f0; /* hover:bg-slate-200 */
+  border-color: #94a3b8; /* hover:border-slate-400 */
+}
+
+.cancelButton:hover {
+  transform: translateY(-1px);
+}
+
+/* Efectos de transición */
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalOverlay {
+  animation: overlayFadeIn 0.2s ease-out forwards;
+}
+
+.modal {
+  animation: modalFadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}

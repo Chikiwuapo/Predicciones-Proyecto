@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 
 import Dashboard from '@/pages/Dashboard/Dashboard';
@@ -8,12 +9,45 @@ import Profile from '@/pages/Settings/Profile';
 import Users from '@/pages/Settings/Users';
 import Vinos from '@/pages/Vinos/Vinos';
 import Abandono from '@/pages/Abandono/Abandono';
+import FacialLogin from '@/auth/FacialLogin';
+
+// Componente para rutas protegidas
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const [isAuthenticated] = useState(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem('isAuthenticated') === 'true'
+  );
+
+  const handleLogin = () => {
+    localStorage.setItem('isAuthenticated', 'true');
+    setIsAuthenticated(true);
+  };
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />}>
+        <Route path="/login" element={
+          <div style={{ height: '100vh' }}>
+            <FacialLogin onLogin={handleLogin} />
+          </div>
+        } />
+        
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }>
           <Route index element={<Home />} />
           <Route path="clasificacion-vinos" element={<Vinos />} />
           <Route path="abandono" element={<Abandono />} />
@@ -30,8 +64,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
-      {/* Botón flotante de tema (fijo en bottom-right) */}
-      <ThemeToggle />
+      {isAuthenticated && <ThemeToggle />}
     </BrowserRouter>
   );
 }

@@ -1,10 +1,20 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaHome, FaWineBottle, FaSchool, FaChartLine, FaCog, FaUser, FaUsers, FaSignOutAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import styles from "../styles/Sidebar.module.css";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Limpiar el estado de autenticación
+    localStorage.removeItem('isAuthenticated');
+    // Redirigir al login
+    navigate('/login');
+  };
   return (
     <aside className={styles.container}>
       <header className={styles.header}>
@@ -106,7 +116,10 @@ export default function Sidebar() {
       </nav>
 
       <div className={styles.logout}>
-        <button className={styles.logoutButton}>
+        <button 
+          className={styles.logoutButton}
+          onClick={() => setShowLogoutModal(true)}
+        >
           <span className={styles.navContent}>
             <FaSignOutAlt className={styles.icon} />
             <span className={styles.label}>Cerrar sesión</span>
@@ -115,6 +128,16 @@ export default function Sidebar() {
         <div className={styles.separator} />
         <div className={styles.copyright}>© 2025 Proyecto Predicciones</div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showLogoutModal}
+        title="Cerrar sesión"
+        message="¿Estás seguro de que deseas cerrar sesión?"
+        confirmText="Cerrar sesión"
+        cancelText="Cancelar"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </aside>
   );
 }
