@@ -58,22 +58,26 @@ export default function Stats() {
             Última actualización: --/--/----
           </div>
         </div>
-        
-        <div className={styles.card}>
-          <h3>Promedio de Calidad</h3>
-          <div className={styles.statValue}>0.0</div>
-          <div className={styles.statChange}>
-            <span className={styles.changeNegative}>0%</span> vs período anterior
+        {/* Mostrar tarjetas específicas por pestaña */}
+        {activeTab === 'vinos' && (
+          <div className={styles.card}>
+            <h3>Promedio de Calidad</h3>
+            <div className={styles.statValue}>{(currentStats as any).calidadPromedio ?? '0.0'}</div>
+            <div className={styles.statChange}>
+              <span className={styles.changeNegative}>0%</span> vs período anterior
+            </div>
           </div>
-        </div>
-        
-        <div className={styles.card}>
-          <h3>Riesgo de Abandono</h3>
-          <div className={styles.statValue}>0%</div>
-          <div className={styles.statChange}>
-            <span className={styles.changePositive}>0%</span> vs período anterior
+        )}
+
+        {activeTab === 'abandono' && (
+          <div className={styles.card}>
+            <h3>Riesgo de Abandono</h3>
+            <div className={styles.statValue}>{(currentStats as any).riesgoPromedio ?? '0%'}</div>
+            <div className={styles.statChange}>
+              <span className={styles.changePositive}>0%</span> vs período anterior
+            </div>
           </div>
-        </div>
+        )}
       </div>
       
       <div className={styles.chartContainer}>

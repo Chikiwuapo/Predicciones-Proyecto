@@ -9,6 +9,9 @@ export default function Profile() {
     notifications: true,
     theme: 'dark',
   });
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [showToast, setShowToast] = useState<string | null>(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -20,8 +23,21 @@ export default function Profile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para guardar cambios
-    alert('Cambios guardados correctamente');
+    // Abrir modal de confirmación
+    setShowConfirm(true);
+  };
+
+  const doSave = async () => {
+    try {
+      setSaving(true);
+      // TODO: Reemplazar por llamada real al backend
+      await new Promise(resolve => setTimeout(resolve, 1200));
+    } finally {
+      setSaving(false);
+      setShowConfirm(false);
+      setShowToast('Cambios guardados correctamente');
+      setTimeout(() => setShowToast(null), 2400);
+    }
   };
 
   return (
@@ -73,48 +89,6 @@ export default function Profile() {
               <option value="Usuario">Usuario</option>
             </select>
           </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                name="notifications"
-                checked={formData.notifications}
-                onChange={handleChange}
-                className={styles.checkbox}
-              />
-              <span>Recibir notificaciones por correo</span>
-            </label>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label>Tema de la aplicación</label>
-            <div className={styles.radioGroup}>
-              <label className={styles.radioLabel}>
-                <input
-                  type="radio"
-                  name="theme"
-                  value="light"
-                  checked={formData.theme === 'light'}
-                  onChange={handleChange}
-                  className={styles.radio}
-                />
-                <span>Claro</span>
-              </label>
-              <label className={styles.radioLabel}>
-                <input
-                  type="radio"
-                  name="theme"
-                  value="dark"
-                  checked={formData.theme === 'dark'}
-                  onChange={handleChange}
-                  className={styles.radio}
-                />
-                <span>Oscuro</span>
-              </label>
-            </div>
-          </div>
-
           <div className={styles.formActions}>
             <button type="button" className={styles.cancelButton}>
               Cancelar
@@ -125,6 +99,55 @@ export default function Profile() {
           </div>
         </form>
       </div>
+      {showConfirm && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => { if (!saving) setShowConfirm(false); }}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3>Confirmar guardado</h3>
+            </div>
+            <div className={styles.modalBody}>
+              <p>¿Deseas guardar los cambios realizados en tu perfil?</p>
+              <ul>
+                <li><strong>Nombre:</strong> {formData.name}</li>
+                <li><strong>Correo:</strong> {formData.email}</li>
+                <li><strong>Rol:</strong> {formData.role}</li>
+              </ul>
+            </div>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.cancelButton}
+                onClick={() => setShowConfirm(false)}
+                disabled={saving}
+              >
+                Cancelar
+              </button>
+              <button
+                className={styles.saveButton}
+                onClick={doSave}
+                disabled={saving}
+              >
+                {saving ? (
+                  <>
+                    <span className={styles.spinner} />
+                    Guardando cambios...
+                  </>
+                ) : (
+                  'Confirmar'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showToast && (
+        <div className={`${styles.toast} ${styles.toastSuccess}`}>
+          <span className={styles.toastIcon} />
+          <span>{showToast}</span>
+        </div>
+      )}
     </div>
   );
 }
