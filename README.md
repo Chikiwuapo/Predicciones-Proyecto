@@ -1,179 +1,161 @@
-# 🍷 Sistema de Análisis de Calidad de Vinos
+# 🍷 Sistema de Análisis de Vinos
 
-Un sistema completo de análisis de vinos con gráficos interactivos, clasificaciones automáticas y navegación fluida que funciona completamente en el frontend con opción de backend Django.
+Sistema completo de análisis de vinos con frontend en React/TypeScript y backend en Django/Python, que incluye análisis en tiempo real, clasificación automática de vinos y visualización de datos interactiva.
 
 ## 📋 Tabla de Contenidos
 
 - [Características](#-características)
-- [Tecnologías](#-tecnologías)
+- [Tecnologías Utilizadas](#-tecnologías-utilizadas)
 - [Instalación](#-instalación)
-- [Uso](#-uso)
-- [Funcionalidades](#-funcionalidades)
-- [Gráficos](#-gráficos)
-- [Clasificaciones](#-clasificaciones)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
-- [API Endpoints](#-api-endpoints)
-- [Contribución](#-contribución)
+- [Comandos](#-comandos)
+- [Funcionalidades](#-funcionalidades)
 
 ## ✨ Características
 
-### 🎯 Funcionalidades Principales
-- **Análisis en tiempo real** sin depender del backend
-- **Gráficos interactivos** con clasificaciones automáticas
-- **Navegación fluida** con redirección automática
-- **Historial persistente** durante la sesión
-- **15 tipos de clasificaciones** diferentes de vinos
-- **Sistema de colores** por nivel de confianza
-- **Diseño responsive** y moderno
+- **Análisis en Tiempo Real**: Monitoreo continuo de parámetros del vino
+- **Clasificación Automática**: 6 tipos de vino con porcentajes de confianza
+- **Gráficos Interactivos**: Visualización dinámica con Recharts
+- **Diseño Responsivo**: Adaptable a diferentes tamaños de pantalla
+- **Tema Dinámico**: Soporte para modo claro y oscuro
+- **API REST**: Backend robusto con Django REST Framework
 
-### 📊 Gráficos Implementados
-- **Clasificaciones Comparativas del Vino** (Principal)
-- **Distribución de Alcohol** (Gráfico circular tipo donut)
-- **Componentes Químicos** (Gráfico de barras)
-- **Datos en Tiempo Real** (Gráfico de área)
+## 🛠️ Tecnologías Utilizadas
 
-## 🛠 Tecnologías
+### Frontend (React/TypeScript)
 
-### Frontend
-- **React 18** con TypeScript
-- **Recharts** para gráficos interactivos
-- **React Router** para navegación
-- **CSS Modules** para estilos
-- **Vite** como bundler
+#### Dependencias Principales
+```bash
+# React y React DOM
+npm install react@^19.1.1 react-dom@^19.1.1
 
-### Backend (Opcional)
-- **Django 5.2.5** con Python
-- **Django REST Framework** para APIs
-- **SQLite** como base de datos
-- **Entorno virtual** para dependencias
+# React Router para navegación
+npm install react-router-dom@^7.8.2
+
+# React Icons para iconos
+npm install react-icons@^5.5.0
+
+# Recharts para gráficos interactivos
+npm install recharts@^3.1.2
+```
+
+#### Dependencias de Desarrollo
+```bash
+# TypeScript
+npm install --save-dev typescript@~5.8.3
+
+# Tipos para React
+npm install --save-dev @types/react@^19.1.10 @types/react-dom@^19.1.7
+
+# Vite y plugin de React
+npm install --save-dev vite@^7.1.2 @vitejs/plugin-react@^5.0.0
+
+# ESLint y plugins
+npm install --save-dev eslint@^9.33.0 @eslint/js@^9.33.0
+npm install --save-dev eslint-plugin-react-hooks@^5.2.0 eslint-plugin-react-refresh@^0.4.20
+
+# TypeScript ESLint
+npm install --save-dev typescript-eslint@^8.39.1
+
+# Otros tipos y utilidades
+npm install --save-dev @types/node@^24.3.0 globals@^16.3.0
+```
+
+### Backend (Django/Python)
+
+#### Dependencias
+```bash
+# Django framework
+pip install Django==5.2.5
+
+# Django REST Framework para APIs
+pip install djangorestframework==3.15.2
+
+# Django CORS Headers para manejo de CORS
+pip install django-cors-headers==4.3.1
+
+# Python Decouple para variables de entorno
+pip install python-decouple==3.8
+```
 
 ## 🚀 Instalación
 
-### Frontend
+### Prerrequisitos
+
+- **Node.js** (versión 18 o superior)
+- **Python** (versión 3.8 o superior)
+- **npm** o **yarn**
+- **pip**
+
+### 🚀 Instalación Rápida (Desarrolladores Experimentados)
+
 ```bash
+# Clonar repositorio
+git clone <url-del-repositorio>
+cd Predicciones-Proyecto
+
+# Frontend (Terminal 1)
 cd Frontend
 npm install
 npm run dev
+
+# Backend (Terminal 2)
+cd Backend
+python -m venv env
+env\Scripts\activate  # Windows
+# source env/bin/activate  # macOS/Linux
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 
-### Backend (Opcional)
+### 1. Clonar el Repositorio
+
 ```bash
+git clone <url-del-repositorio>
+cd Predicciones-Proyecto
+```
+
+### 2. Configurar Frontend
+
+```bash
+# Navegar al directorio Frontend
+cd Frontend
+
+# Instalar dependencias
+npm install
+
+# Ejecutar en modo desarrollo
+npm run dev
+```
+
+### 3. Configurar Backend
+
+```bash
+# Navegar al directorio Backend
 cd Backend
+
+# Crear entorno virtual
+python -m venv env
+
 # Activar entorno virtual
-.\env\Scripts\activate  # Windows
-source env/bin/activate  # Linux/Mac
+# Windows:
+env\Scripts\activate
+# macOS/Linux:
+source env/bin/activate
 
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Ejecutar migraciones
+# Aplicar migraciones
 python manage.py migrate
 
-# Iniciar servidor
+# Crear superusuario (opcional)
+python manage.py createsuperuser
+
+# Ejecutar servidor
 python manage.py runserver
 ```
-
-## 📖 Uso
-
-### 1. Análisis de Vino
-1. Ve a la página de **Vinos**
-2. Llena el formulario con los parámetros del vino:
-   - Acidez Fija (g/L): 3.8 - 15.9
-   - Acidez Volátil (g/L): 0.08 - 1.58
-   - Ácido Cítrico (g/L): 0 - 1.66
-   - Azúcar Residual (g/L): 0.6 - 65.8
-   - Cloruros (g/L): 0.012 - 0.611
-   - Densidad (g/cm³): 0.99 - 1.04
-   - pH: 2.74 - 4.01
-   - Sulfatos (g/L): 0.22 - 2.0
-   - Grado Alcohólico (% vol): 8.0 - 14.9
-
-3. Haz clic en **"Analizar Vino"**
-4. El sistema automáticamente:
-   - Te redirige al historial
-   - Selecciona el nuevo análisis
-   - Muestra los gráficos
-   - Destaca el tipo de vino principal
-
-### 2. Visualización de Resultados
-- **Gráfico Principal**: Clasificaciones comparativas con porcentajes
-- **Gráfico Circular**: Distribución de alcohol
-- **Gráfico de Barras**: Componentes químicos
-- **Resultado**: Tipo de vino detectado con mayor confianza
-
-## 🎨 Funcionalidades
-
-### 📈 Gráfico de Clasificaciones Comparativas del Vino
-- **Tipo**: Gráfico de barras verticales
-- **Eje X**: Clasificaciones de vinos (rotadas -45°)
-- **Eje Y**: "% de confianza" (0-100%)
-- **Colores por confianza**:
-  - 🟢 Verde: >90% (Excelente)
-  - 🟢 Verde claro: >80% (Muy Buena)
-  - 🟡 Amarillo: >70% (Buena)
-  - 🔴 Rojo: <70% (Regular)
-- **Funcionalidad**: Muestra TODOS los tipos de vino detectados
-- **Resultado**: El tipo con mayor porcentaje se destaca como principal
-
-### 🍷 Gráfico de Distribución de Alcohol
-- **Tipo**: Gráfico circular tipo donut
-- **Características**:
-  - Radio interior (30px) para efecto donut
-  - Líneas de etiqueta conectadas
-  - Leyenda en la parte inferior
-  - Tooltips mejorados
-  - Información destacada del alcohol
-- **Altura**: 350px para mejor visualización
-
-### 🧪 Gráfico de Componentes Químicos
-- **Tipo**: Gráfico de barras
-- **Muestra**: Todos los componentes del vino
-- **Diseño**: Limpio y compacto
-- **Interactividad**: Tooltips informativos
-
-### ⏱ Datos en Tiempo Real
-- **Tipo**: Gráfico de área
-- **Simulación**: Variaciones en tiempo real
-- **Actualización**: Cada 2 segundos
-- **Métricas**: Alcohol, pH, temperatura
-
-## 🏷 Clasificaciones
-
-### 15 Tipos de Clasificaciones Automáticas
-
-#### Por Contenido de Azúcar
-1. **Vino Seco** (< 4 g/L)
-2. **Vino Semiseco** (4-12 g/L)
-3. **Vino Semidulce** (12-45 g/L)
-4. **Vino Dulce** (> 45 g/L)
-
-#### Por Grado Alcohólico
-5. **Vino Fortificado** (> 15% vol)
-6. **Vino de Cuerpo Completo** (13-15% vol)
-7. **Vino de Mesa** (11-13% vol)
-8. **Vino Ligero** (< 11% vol)
-
-#### Por Acidez
-9. **Vino Fresco** (Acidez volátil < 0.2 g/L)
-10. **Vino Equilibrado** (Acidez volátil 0.2-0.8 g/L)
-11. **Vino con Defectos** (Acidez volátil > 0.8 g/L)
-
-#### Por pH
-12. **Vino Ácido** (pH < 3.0)
-13. **Vino Suave** (pH > 3.8)
-14. **Vino con pH Óptimo** (pH 3.0-3.5)
-
-#### Por Densidad
-15. **Vino de Cuerpo Pesado** (Densidad > 1.02 g/cm³)
-16. **Vino de Cuerpo Medio** (Densidad 0.995-1.02 g/cm³)
-17. **Vino Ligero** (Densidad < 0.995 g/cm³)
-
-#### Clasificaciones Especiales
-18. **Vino Premium** (Alcohol > 14% + Azúcar > 20 g/L)
-19. **Vino Tradicional** (Alcohol < 11% + Azúcar < 5 g/L)
-20. **Vino de Postre** (Azúcar > 30 g/L + Alcohol > 12%)
-21. **Vino Espumante** (Alcohol < 12% + Azúcar < 3 g/L + Acidez > 6 g/L)
-22. **Vino Rosado** (Alcohol 10-13% + Azúcar 2-8 g/L)
 
 ## 📁 Estructura del Proyecto
 
@@ -183,100 +165,239 @@ Predicciones-Proyecto/
 │   ├── src/
 │   │   ├── pages/
 │   │   │   └── Vinos/
-│   │   │       ├── Vinos.tsx          # Componente principal
-│   │   │       ├── WineCharts.tsx     # Gráficos interactivos
-│   │   │       └── Vinos.module.css   # Estilos
+│   │   │       ├── Vinos.tsx
+│   │   │       ├── WineCharts.tsx
+│   │   │       └── Vinos.module.css
 │   │   ├── components/
 │   │   ├── context/
-│   │   └── services/
+│   │   ├── services/
+│   │   └── types/
+│   ├── package.json
+│   └── vite.config.ts
 ├── Backend/
 │   ├── api/
-│   │   ├── models.py                  # Modelos de datos
-│   │   ├── views.py                   # Vistas y lógica
-│   │   ├── serializers.py             # Serializadores
-│   │   └── urls.py                    # Rutas de API
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   └── urls.py
 │   ├── Backend/
-│   │   ├── settings.py                # Configuración
-│   │   └── urls.py                    # Rutas principales
-│   └── requirements.txt               # Dependencias Python
+│   │   ├── settings.py
+│   │   └── urls.py
+│   ├── requirements.txt
+│   └── manage.py
 └── README.md
 ```
 
-## 🔌 API Endpoints
+## ⚡ Comandos
 
-### Backend (Django REST Framework)
+### Frontend
 
-#### Análisis de Vinos
-- `POST /api/wine-analysis/` - Crear nuevo análisis
-- `GET /api/wine-analysis/` - Listar todos los análisis
-- `GET /api/wine-analysis/<id>/` - Obtener análisis específico
+#### Instalación de Dependencias
+```bash
+# Instalar todas las dependencias de una vez (recomendado)
+npm install
 
-#### Estadísticas
-- `GET /api/wine-statistics/` - Estadísticas globales
-- `GET /api/real-time-data/<id>/` - Datos en tiempo real
+# O instalar dependencias individualmente:
+# Dependencias principales
+npm install react@^19.1.1 react-dom@^19.1.1 react-router-dom@^7.8.2 react-icons@^5.5.0 recharts@^3.1.2
 
-#### Utilidades
-- `GET /api/hello/` - Endpoint de prueba
-- `POST /api/test-classifications/` - Crear análisis de prueba
+# Dependencias de desarrollo
+npm install --save-dev typescript@~5.8.3 @types/react@^19.1.10 @types/react-dom@^19.1.7 vite@^7.1.2 @vitejs/plugin-react@^5.0.0 eslint@^9.33.0 @eslint/js@^9.33.0 eslint-plugin-react-hooks@^5.2.0 eslint-plugin-react-refresh@^0.4.20 typescript-eslint@^8.39.1 @types/node@^24.3.0 globals@^16.3.0
+```
 
-### Frontend (React)
+#### Comandos de Desarrollo
+```bash
+# Ejecutar en modo desarrollo
+npm run dev
 
-#### Páginas
-- `/vinos` - Análisis de vinos
-- `/estadisticas` - Estadísticas globales
-- `/dashboard` - Panel principal
-- `/configuracion` - Configuración
+# Construir para producción
+npm run build
 
-## 🎯 Características Técnicas
+# Ejecutar linter
+npm run lint
 
-### Navegación Automática
-- **Redirección automática**: Al hacer análisis → va directo al historial
-- **Selección automática**: El nuevo análisis se selecciona inmediatamente
-- **Gráficos automáticos**: Se muestran sin hacer clic
-- **Scroll inteligente**: Se enfoca en el análisis creado
+# Vista previa de producción
+npm run preview
+```
 
-### Sistema de Colores
-- **Verde (#4CAF50)**: Excelente confianza (90%+)
-- **Verde claro (#8BC34A)**: Muy buena confianza (80-89%)
-- **Amarillo (#FFC107)**: Buena confianza (70-79%)
-- **Rojo (#F44336)**: Confianza regular (<70%)
+### Backend
 
-### Responsive Design
-- **Grid adaptativo**: Se ajusta a diferentes tamaños de pantalla
-- **Gráficos responsivos**: Se redimensionan automáticamente
-- **Navegación móvil**: Optimizada para dispositivos móviles
+#### Instalación de Dependencias
+```bash
+# Activar entorno virtual
+# Windows:
+env\Scripts\activate
+# macOS/Linux:
+source env/bin/activate
+
+# Instalar todas las dependencias de una vez (recomendado)
+pip install -r requirements.txt
+
+# O instalar dependencias individualmente:
+pip install Django==5.2.5
+pip install djangorestframework==3.15.2
+pip install django-cors-headers==4.3.1
+pip install python-decouple==3.8
+```
+
+#### Comandos de Desarrollo
+```bash
+# Aplicar migraciones
+python manage.py migrate
+
+# Crear migraciones
+python manage.py makemigrations
+
+# Ejecutar servidor de desarrollo
+python manage.py runserver
+
+# Crear superusuario
+python manage.py createsuperuser
+
+# Ejecutar tests
+python manage.py test
+
+# Shell de Django
+python manage.py shell
+```
+
+## 🎯 Funcionalidades
+
+### Análisis de Vinos
+- **Parámetros Químicos**: Análisis de acidez, pH, alcohol, densidad, etc.
+- **Clasificación Automática**: 6 tipos de vino con porcentajes de confianza
+- **Distribución de Alcohol**: Gráfico circular con porcentajes
+- **Componentes Químicos**: Gráfico de barras con valores detallados
+
+### Visualización en Tiempo Real
+- **Datos Dinámicos**: Actualización automática cada 2 segundos
+- **Gráficos Interactivos**: Tooltips y animaciones
+- **Tarjetas de Información**: Valores actuales de alcohol, pH, temperatura y humedad
+
+### Tipos de Vino Soportados
+1. **Vino Seco**: Muy poca azúcar residual
+2. **Vino Semiseco**: Cantidad moderada de azúcar
+3. **Vino Semidulce**: Más azúcar que semiseco
+4. **Vino Dulce**: Mayor concentración de azúcar
+5. **Vino Espumoso**: Efervescencia y burbujas
+6. **Vino Fortificado**: Grado alcohólico más alto
+
+### Características del Dashboard
+- **Layout Responsivo**: Adaptable a diferentes tamaños de pantalla
+- **Colores Dinámicos**: Adaptación automática al tema claro/oscuro
+- **Navegación Fluida**: Transiciones suaves entre secciones
+- **Historial de Análisis**: Persistencia de datos en localStorage
+
+## 🌐 Puertos por Defecto
+
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:8000
+
+## 📝 Notas de Desarrollo
+
+### Variables de Entorno
+Crear archivo `.env` en el directorio Backend:
+```env
+DEBUG=True
+SECRET_KEY=tu-clave-secreta-aqui
+ALLOWED_HOSTS=localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+```
+
+## 🔧 Solución de Problemas
+
+### Frontend
+
+#### Error: "Could not read package.json"
+```bash
+# Asegúrate de estar en el directorio correcto
+cd Frontend
+npm install
+```
+
+#### Error: "Module not found"
+```bash
+# Limpiar cache de npm
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+```
+
+#### Error: "TypeScript compilation failed"
+```bash
+# Reinstalar TypeScript
+npm install --save-dev typescript@~5.8.3
+npx tsc --init
+```
+
+### Backend
+
+#### Error: "No module named 'django'"
+```bash
+# Activar entorno virtual
+# Windows:
+env\Scripts\activate
+# macOS/Linux:
+source env/bin/activate
+
+# Reinstalar dependencias
+pip install -r requirements.txt
+```
+
+#### Error: "Database does not exist"
+```bash
+# Aplicar migraciones
+python manage.py migrate
+
+# Si persiste, crear base de datos
+python manage.py makemigrations
+python manage.py migrate
+```
+
+#### Error: "Port already in use"
+```bash
+# Cambiar puerto
+python manage.py runserver 8001
+
+# O matar proceso en puerto 8000
+# Windows:
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+# macOS/Linux:
+lsof -ti:8000 | xargs kill -9
+```
+
+### Estructura de Datos
+El sistema utiliza parámetros químicos del vino como:
+- Acidez fija y volátil
+- Ácido cítrico
+- Azúcar residual
+- Cloruros
+- Sulfatos
+- Alcohol
+- pH
+- Densidad
+- Dióxido de azufre
 
 ## 🤝 Contribución
 
-### Cómo Contribuir
 1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+5. Abrir un Pull Request
 
-### Estándares de Código
-- **TypeScript**: Para el frontend
-- **ESLint**: Para linting
-- **Prettier**: Para formateo
-- **PEP 8**: Para Python (backend)
-
-## 📝 Licencia
+## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
 ## 👥 Autores
 
-- **Desarrollador Principal** - [Tu Nombre]
-- **Contribuidores** - [Lista de contribuidores]
+- **Tu Nombre** - *Desarrollo inicial* - [TuUsuario](https://github.com/TuUsuario)
 
 ## 🙏 Agradecimientos
 
-- **Recharts** por las librerías de gráficos
-- **Django** por el framework backend
-- **React** por el framework frontend
-- **Vite** por el bundler rápido
-
----
-
-**🍷 ¡Disfruta analizando vinos con nuestro sistema!**
+- React y su ecosistema
+- Django y Django REST Framework
+- Recharts para visualización de datos
+- La comunidad de desarrolladores open source
