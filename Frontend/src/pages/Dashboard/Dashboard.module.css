@@ -9,9 +9,9 @@
     min-height: 100vh;
     padding: 15px;
 
-    color: #ffffff;
+    color: var(--text);
 
-    background-color: #1E1E1E;
+    background-color: var(--page-bg);
 }
 
 .dashboardHeader{
@@ -51,7 +51,7 @@
     }
     & p{
         font-size: 12px;
-        color: #AAAAAA;
+        color: var(--muted);
     }
 }
 .dashboardMenu{
@@ -68,19 +68,7 @@
     & p{
         margin-top: 40px;
         font-size: 14px;
-        color: #6B7280;
+        color: var(--muted);
         text-align: center;
     }
-}
-
-[data-theme="light"] .dashboardContainer,
-[data-theme="light"] .dashboardHeader {
-  color: #ffffff !important;
-}
-
-[data-theme="light"] .dashboardContainer {
-  background-color: #a0a3a0 !important;
-}
-[data-theme="light"] .dashboardHeader {
-  background-color: #a0a3a0 !important;
 }

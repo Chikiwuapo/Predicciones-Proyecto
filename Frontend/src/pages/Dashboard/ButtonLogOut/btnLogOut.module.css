@@ -9,9 +9,9 @@
   border: none;
   border-radius: 10px;
 
-  color: #AAAAAA;
+  color: var(--muted);
 
-  background-color: #212527;
+  background-color: var(--bg-2);
 }
 
 .btnLogOut:hover {
@@ -22,7 +22,7 @@
 
   font-size: 16px;
   font-weight: 600;
-  color: white;
+  color: var(--accent-contrast);
   
   background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.25);
@@ -40,7 +40,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.2),
+      var(--bg-3),
       transparent
     );
 
@@ -62,8 +62,8 @@
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: white;
+  border: 2px solid var(--stroke);
+  border-top-color: var(--text);
   border-radius: 50%;
 
   filter: blur(0.3px);

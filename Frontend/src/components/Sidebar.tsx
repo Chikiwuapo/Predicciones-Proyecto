@@ -15,7 +15,6 @@ export default function Sidebar() {
       <div className={styles.separator} />
 
       <section className={styles.profile}>
-        <div className={styles.profileBadge} />
         <div className={styles.profileInfo}>
           <div className={styles.profileName}>aqui va nombre de usuario</div>
           <div className={styles.profileRole}>aqui va rol</div>
@@ -45,7 +44,7 @@ export default function Sidebar() {
         >
           <span className={styles.navContent}>
             <FaWineBottle className={styles.icon} />
-            <span className={styles.label}>Clasificación multiclase (Vinos)</span>
+            <span className={styles.label}>Clasificación de Vinos</span>
           </span>
         </NavLink>
         <NavLink 

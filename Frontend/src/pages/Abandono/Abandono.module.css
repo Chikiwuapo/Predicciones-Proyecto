@@ -61,7 +61,7 @@
 
 .tab:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-3);
 }
 
 .tab.active {
@@ -394,7 +394,7 @@
 .resultConfidence strong { color: var(--text); font-weight: 700; }
 
 .resultMessage {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-3);
   border: 1px solid var(--stroke);
   color: var(--text);
   border-radius: 8px;
@@ -427,7 +427,7 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-3);
   border: 1px solid var(--stroke);
   border-radius: 6px;
   padding: 10px 12px;
@@ -792,9 +792,9 @@
 .filtersBar .inputWrapper input[type="search"] {
   height: 36px;
   padding: 0 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--stroke);
   border-radius: 10px;
-  background: #fff;
+  background: var(--bg);
   color: var(--text);
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   transition: border-color .16s ease, box-shadow .16s ease, background .16s ease, transform .16s ease;
@@ -818,9 +818,9 @@
 .filtersBar .inputWrapper input { min-width: 160px; }
 
 .clearButton {
-  background: #fff;
-  color: #000;
-  border: 1px solid #e5e7eb;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--stroke);
   padding: 8px 14px;
   border-radius: 10px;
   font-size: 12px;
@@ -830,7 +830,7 @@
 }
 
 .clearButton:hover {
-  background: #fff;
+  background: var(--bg);
   border-color: var(--neon);
   box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.18);
   transform: translateY(-1px);

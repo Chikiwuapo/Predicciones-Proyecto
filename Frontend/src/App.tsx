@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ThemeToggle from '@/components/ThemeToggle';
+
 import Dashboard from '@/pages/Dashboard/Dashboard';
 import Home from '@/pages/Home/Home';
 import Stats from '@/pages/Stats/Stats';
@@ -28,6 +30,8 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
+      {/* Botón flotante de tema (fijo en bottom-right) */}
+      <ThemeToggle />
     </BrowserRouter>
   );
 }

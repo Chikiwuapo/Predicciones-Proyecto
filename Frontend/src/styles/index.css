@@ -20,6 +20,7 @@ html, body, #root {
   --bg: #ffffff;                 /* inputs */
   --bg-1: #ffffff;               /* cards */
   --bg-2: #ffffff;               /* cards alternativas */
+  --bg-3: #f8fafc;               /* capas sutiles, disabled */
   --stroke: #e2e8f0;             /* bordes suaves */
   --text: #0f172a;               /* texto principal */
   --muted: #64748b;              /* texto secundario */
@@ -37,6 +38,7 @@ html, body, #root {
   --bg: #0f172a;
   --bg-1: #0f172a;
   --bg-2: #111827;
+  --bg-3: #0d1526;
   --stroke: #243042;
   --text: #e5e7eb;
   --muted: #9ca3af;
@@ -59,3 +61,32 @@ body {
 /* Enlaces y botones neutros */
 a { text-decoration: none; color: inherit; }
 button { font: inherit; cursor: pointer; background: none; border: none; }
+
+/* Transiciones suaves entre temas */
+html, body, #root {
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* Botón flotante para cambio de tema */
+.theme-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg-2);
+  color: var(--text);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.theme-toggle:hover {
+  background: var(--bg);
+}
+
+.theme-toggle__icon { font-size: 18px; line-height: 1; }
