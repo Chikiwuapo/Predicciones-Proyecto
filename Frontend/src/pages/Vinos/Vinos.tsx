@@ -11,6 +11,7 @@ import {
   FaInfoCircle
 } from 'react-icons/fa';
 import styles from './Vinos.module.css';
+import WineCharts from './WineCharts';
 
 type WineQuality = 'Baja' | 'Media' | 'Alta' | '';
 
@@ -98,19 +99,60 @@ export default function Vinos() {
     
     try {
       // Simulación de llamada a la API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Resultado simulado
-      const qualities: WineQuality[] = ['Baja', 'Media', 'Alta'];
-      const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
-      const randomConfidence = Math.floor(Math.random() * 30) + 70; // 70-100%
+      // Análisis inteligente basado en los parámetros del vino
+      let quality: WineQuality = 'Media';
+      let confidence = 75;
+      
+      // Evaluar calidad basada en parámetros
+      const { alcohol, pH, volatileAcidity, residualSugar, fixedAcidity } = formData;
+      
+      // Criterios de calidad
+      let score = 0;
+      
+      // Alcohol (ideal: 12-14%)
+      if (alcohol >= 12 && alcohol <= 14) score += 25;
+      else if (alcohol >= 11 && alcohol <= 15) score += 15;
+      else score += 5;
+      
+      // pH (ideal: 3.0-3.5)
+      if (pH >= 3.0 && pH <= 3.5) score += 25;
+      else if (pH >= 2.8 && pH <= 3.8) score += 15;
+      else score += 5;
+      
+      // Acidez volátil (ideal: < 0.6)
+      if (volatileAcidity < 0.6) score += 20;
+      else if (volatileAcidity < 1.0) score += 10;
+      else score += 0;
+      
+      // Azúcar residual (depende del tipo)
+      if (residualSugar < 4 || (residualSugar >= 12 && residualSugar <= 45)) score += 15;
+      else score += 8;
+      
+      // Acidez fija (ideal: 6-9 g/L)
+      if (fixedAcidity >= 6 && fixedAcidity <= 9) score += 15;
+      else if (fixedAcidity >= 4 && fixedAcidity <= 12) score += 10;
+      else score += 5;
+      
+      // Determinar calidad basada en el score
+      if (score >= 80) {
+        quality = 'Alta';
+        confidence = Math.floor(Math.random() * 15) + 85; // 85-100%
+      } else if (score >= 60) {
+        quality = 'Media';
+        confidence = Math.floor(Math.random() * 15) + 70; // 70-85%
+      } else {
+        quality = 'Baja';
+        confidence = Math.floor(Math.random() * 15) + 55; // 55-70%
+      }
       
       setResult({
-        quality: randomQuality,
-        confidence: randomConfidence
+        quality,
+        confidence
       });
 
-      // Opcional: agregar entrada rápida al historial (mock) para ejemplificar
+      // Crear nuevo análisis en el historial
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -119,11 +161,21 @@ export default function Vinos() {
         id: String(Date.now()),
         date: now.toLocaleString(),
         dateKey: `${yyyy}-${mm}-${dd}`,
-        quality: randomQuality,
-        confidence: randomConfidence,
+        quality,
+        confidence,
         parameters: { ...formData },
       };
-      setHistory(prev => [newItem, ...prev]);
+      setHistory(prev => {
+        const updated = [newItem, ...prev];
+        // Guardar en localStorage
+        try {
+          localStorage.setItem('vinos.history', JSON.stringify(updated));
+        } catch (error) {
+          console.error('Error saving history:', error);
+        }
+        return updated;
+      });
+      setSelectedAnalysisForCharts(newItem);
 
       // Cambiar a la pestaña de historial y desplazar suavemente
       setActiveTab('historial');
@@ -160,9 +212,9 @@ export default function Vinos() {
     }
   }, [activeTab, pendingScrollToHistory, result]);
 
-  // Persistencia de filtros en localStorage
+  // Cargar datos de ejemplo y filtros al montar
   useEffect(() => {
-    // Cargar al montar
+    // Cargar filtros guardados
     try {
       const stored = localStorage.getItem('vinos.filters');
       if (stored) {
@@ -173,6 +225,83 @@ export default function Vinos() {
         else if (typeof parsed.fromDate === 'string') setDateFilter(parsed.fromDate);
       }
     } catch {}
+
+    // Cargar historial guardado o crear datos de ejemplo
+    try {
+      const storedHistory = localStorage.getItem('vinos.history');
+      if (storedHistory) {
+        const parsedHistory = JSON.parse(storedHistory) as WineAnalysis[];
+        setHistory(parsedHistory);
+      } else {
+        // Crear datos de ejemplo
+        const exampleData: WineAnalysis[] = [
+          {
+            id: '1',
+            date: '2024-01-15 14:30:25',
+            dateKey: '2024-01-15',
+            quality: 'Alta',
+            confidence: 92,
+            parameters: {
+              fixedAcidity: 7.4,
+              volatileAcidity: 0.7,
+              citricAcid: 0.0,
+              residualSugar: 1.9,
+              chlorides: 0.076,
+              freeSulfurDioxide: 11,
+              totalSulfurDioxide: 34,
+              density: 0.9978,
+              pH: 3.51,
+              sulphates: 0.56,
+              alcohol: 9.4
+            }
+          },
+          {
+            id: '2',
+            date: '2024-01-14 16:45:12',
+            dateKey: '2024-01-14',
+            quality: 'Media',
+            confidence: 78,
+            parameters: {
+              fixedAcidity: 8.8,
+              volatileAcidity: 0.88,
+              citricAcid: 0.0,
+              residualSugar: 2.6,
+              chlorides: 0.098,
+              freeSulfurDioxide: 25,
+              totalSulfurDioxide: 67,
+              density: 0.9968,
+              pH: 3.2,
+              sulphates: 0.68,
+              alcohol: 9.8
+            }
+          },
+          {
+            id: '3',
+            date: '2024-01-13 11:20:33',
+            dateKey: '2024-01-13',
+            quality: 'Baja',
+            confidence: 65,
+            parameters: {
+              fixedAcidity: 6.3,
+              volatileAcidity: 0.31,
+              citricAcid: 0.47,
+              residualSugar: 3.6,
+              chlorides: 0.067,
+              freeSulfurDioxide: 18,
+              totalSulfurDioxide: 42,
+              density: 0.9959,
+              pH: 3.16,
+              sulphates: 0.69,
+              alcohol: 11.0
+            }
+          }
+        ];
+        setHistory(exampleData);
+        localStorage.setItem('vinos.history', JSON.stringify(exampleData));
+      }
+    } catch (error) {
+      console.error('Error loading history:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -199,12 +328,16 @@ export default function Vinos() {
   const handleSelectHistory = (item: WineAnalysis) => {
     setFormData({ ...item.parameters });
     setResult({ quality: item.quality, confidence: item.confidence });
+    setSelectedAnalysisForCharts(item);
     setActiveTab('historial');
     // Desplazar al resultado después de renderizar
     setTimeout(() => {
       resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 0);
   };
+
+  // Estado para el análisis seleccionado en los gráficos
+  const [selectedAnalysisForCharts, setSelectedAnalysisForCharts] = useState<WineAnalysis | null>(null);
 
   return (
     <div className={styles.container}>
@@ -764,6 +897,13 @@ export default function Vinos() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Componente de Gráficos */}
+        {activeTab === 'historial' && selectedAnalysisForCharts && (
+          <WineCharts 
+            selectedAnalysis={selectedAnalysisForCharts}
+          />
         )}
       </div>
       {/* Modales */}

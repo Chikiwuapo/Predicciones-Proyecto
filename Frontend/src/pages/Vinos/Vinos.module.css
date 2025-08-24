@@ -799,6 +799,351 @@ detailItem span:first-child {
   margin-right: 10px;
 }
 
+/* Charts Styles */
+.chartsContainer {
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--bg-2);
+  border-radius: 8px;
+  border: 1px solid var(--stroke);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chartsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  min-height: 400px;
+}
+
+.bottomRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  min-height: 400px;
+}
+
+.alcoholRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  min-height: 400px;
+}
+
+.chartsGrid .chartSection {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartsGrid .chartContainer {
+  flex: 1;
+  min-height: 300px;
+}
+
+.fullWidthSection {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.chartsContainer h2 {
+  margin: 0 0 20px 0;
+  color: var(--neon);
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.chartSection {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: var(--bg-3);
+  border-radius: 8px;
+  border: 1px solid var(--stroke);
+  height: fit-content;
+}
+
+.chartSection h3 {
+  margin: 0 0 15px 0;
+  color: var(--neon);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.chartContainer {
+  background: var(--bg-2);
+  border-radius: 6px;
+  padding: 10px;
+  border: 1px solid var(--stroke);
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.chartContainer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 166, 35, 0.1);
+}
+
+/* Animación para el gráfico circular */
+@keyframes pieChartUpdate {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pieChartContainer {
+  animation: pieChartUpdate 0.6s ease-out;
+}
+
+/* Variables de colores dinámicos para gráficos */
+:root {
+  --chart-primary: #4CAF50;
+  --chart-secondary: #8BC34A;
+  --chart-accent: #FFC107;
+  --chart-danger: #F44336;
+  --chart-info: #2196F3;
+  --chart-warning: #FF9800;
+  --chart-success: #4CAF50;
+  --chart-purple: #9C27B0;
+  --chart-teal: #009688;
+  --chart-pink: #E91E63;
+  --chart-indigo: #3F51B5;
+  --chart-cyan: #00BCD4;
+  --chart-lime: #CDDC39;
+  --chart-orange: #FF5722;
+  --chart-brown: #795548;
+  --chart-gray: #9E9E9E;
+  --chart-blue-gray: #607D8B;
+}
+
+/* Colores adaptativos para tema oscuro */
+[data-theme="dark"] {
+  --chart-primary: #66BB6A;
+  --chart-secondary: #81C784;
+  --chart-accent: #FFD54F;
+  --chart-danger: #EF5350;
+  --chart-info: #42A5F5;
+  --chart-warning: #FFB74D;
+  --chart-success: #66BB6A;
+  --chart-purple: #BA68C8;
+  --chart-teal: #4DB6AC;
+  --chart-pink: #F06292;
+  --chart-indigo: #7986CB;
+  --chart-cyan: #4DD0E1;
+  --chart-lime: #DCE775;
+  --chart-orange: #FF8A65;
+  --chart-brown: #A1887F;
+  --chart-gray: #BDBDBD;
+  --chart-blue-gray: #90A4AE;
+}
+
+.chartLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.legendColor {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--stroke);
+}
+
+.alcoholInfo {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.alcoholInfo p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.realTimeInfo {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.realTimeInfo p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.realTimeCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.realTimeCard {
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .topRow,
+  .alcoholRow {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .topRow,
+  .alcoholRow {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .chartSection {
+    padding: 12px;
+  }
+  
+  .chartContainer {
+    padding: 8px;
+  }
+}
+
+.realTimeCard {
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.realTimeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 166, 35, 0.15);
+}
+
+.cardLabel {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Estilos específicos para cada tarjeta */
+.alcoholCard {
+  background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(139, 195, 74, 0.25));
+  border-left: 4px solid rgba(139, 195, 74, 0.6);
+}
+
+.pHCard {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.25));
+  border-left: 4px solid rgba(76, 175, 80, 0.6);
+}
+
+.temperatureCard {
+  background: linear-gradient(135deg, rgba(255, 183, 77, 0.15), rgba(255, 183, 77, 0.25));
+  border-left: 4px solid rgba(255, 183, 77, 0.6);
+}
+
+.humidityCard {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(156, 39, 176, 0.25));
+  border-left: 4px solid rgba(156, 39, 176, 0.6);
+}
+
+.mainResult {
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--bg-3);
+  border-radius: 8px;
+  border: 1px solid var(--stroke);
+}
+
+.mainResult h3 {
+  margin: 0 0 15px 0;
+  color: var(--neon);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.resultCard {
+  background: var(--bg-2);
+  border-radius: 6px;
+  padding: 15px;
+  border: 1px solid var(--stroke);
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.resultLabel {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.resultValue {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.confidenceInfo {
+  text-align: right;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.noDataMessage {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  border: 1px dashed var(--stroke);
+  border-radius: 6px;
+}
+
+.noDataMessage p {
+  margin: 0;
+  font-size: 16px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .header {
