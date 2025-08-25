@@ -191,6 +191,40 @@ export const dropoutService = {
     }
   },
 
+  // Obtener datos filtrados por año
+  async getYearFilteredData(year: number): Promise<{
+    data: Array<{
+      date: string;
+      attendance_rate: number;
+      absence_rate: number;
+      risk_score: number;
+      ingresoPromedio: number;
+      study_time: number;
+      age: number;
+      total_students: number;
+      high_risk: number;
+      medium_risk: number;
+      low_risk: number;
+      hasData: boolean;
+    }>;
+    year: number;
+    total_records: number;
+    available_months: string[];
+  }> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/year-filtered-data/?year=${year}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching year filtered data:', error);
+      throw error;
+    }
+  },
+
   // Eliminar todos los análisis
   async clearAllAnalyses(): Promise<{ success: boolean; message: string }> {
     try {

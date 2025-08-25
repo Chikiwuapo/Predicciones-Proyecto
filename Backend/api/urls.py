@@ -18,7 +18,8 @@ from .views import (
     get_risk_time_series_data,
     get_real_time_series_data,
     get_available_dates,
-    get_basic_chart_data
+    get_basic_chart_data,
+    get_year_filtered_data
 )
 
 urlpatterns = [
@@ -41,4 +42,5 @@ urlpatterns = [
     path('real-time-series-data/', get_real_time_series_data, name='real-time-series-data'),
     path('available-dates/', get_available_dates, name='available-dates'),
     path('basic-chart-data/', get_basic_chart_data, name='basic-chart-data'),
+    path('year-filtered-data/', get_year_filtered_data, name='year-filtered-data'),
 ]

@@ -152,7 +152,7 @@ export default function Abandono() {
       // Mapear AnalysisResult a StudentAnalysis
       const mappedAnalyses: StudentAnalysis[] = analyses.map(analysis => ({
         id: analysis.id.toString(),
-        date: analysis.created_at,
+        date: analysis.analysis_date || analysis.created_at, // Usar analysis_date si está disponible
         risk: analysis.risk_level as RiskLevel,
         confidence: analysis.confidence,
         parameters: {
@@ -422,7 +422,15 @@ export default function Abandono() {
       // Guardar entrada en historial
       const entry: StudentAnalysis = {
         id: String(result.id),
-        date: new Date(result.created_at).toLocaleString(),
+        date: result.analysis_date 
+          ? new Date(result.analysis_date).toLocaleDateString('es-ES', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          : new Date(result.created_at).toLocaleString(),
         risk: riskLevel,
         confidence: result.confidence,
         parameters: { 
@@ -478,7 +486,15 @@ export default function Abandono() {
         const data = await dropoutService.getAllAnalyses();
         const historyData: StudentAnalysis[] = data.map((item) => ({
           id: String(item.id),
-          date: new Date(item.created_at).toLocaleString(),
+          date: item.analysis_date 
+          ? new Date(item.analysis_date).toLocaleDateString('es-ES', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          : new Date(item.created_at).toLocaleString(),
           risk: item.risk_level as RiskLevel,
           confidence: item.confidence,
           parameters: {

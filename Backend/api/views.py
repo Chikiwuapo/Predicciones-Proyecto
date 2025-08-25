@@ -1211,6 +1211,10 @@ def implement_database_data(request):
         from django.conf import settings
         import random
         
+        # Limpiar datos existentes primero
+        StudentDropoutAnalysis.objects.all().delete()
+        print("Datos existentes eliminados")
+        
         # Obtener la cantidad de registros a implementar del request
         records_to_implement = request.data.get('records_count', 50)  # Por defecto 50
         
@@ -1257,8 +1261,28 @@ def implement_database_data(request):
                     anio = int(record[1])  # año real de la base de datos
                     
                     # Crear fecha real basada en el año de la base de datos
-                    # Asumimos que los datos son del mismo mes para mantener consistencia
-                    analysis_date = timezone.datetime(anio, 8, 15).date()  # 15 de agosto del año correspondiente
+                    # Distribuir los registros de manera más realista a lo largo del año
+                    # Usar el ID del registro para generar una fecha consistente
+                    record_id = int(record[0])
+                    
+                    # Distribuir registros por trimestres del año escolar
+                    # Trimestre 1: Marzo-Junio (meses 3-6)
+                    # Trimestre 2: Julio-Octubre (meses 7-10) 
+                    # Trimestre 3: Noviembre-Febrero (meses 11, 12, 1, 2)
+                    
+                    # Usar el ID para determinar el trimestre y mes
+                    trimestre = (record_id % 3) + 1
+                    if trimestre == 1:
+                        mes = random.randint(3, 6)  # Marzo-Junio
+                    elif trimestre == 2:
+                        mes = random.randint(7, 10)  # Julio-Octubre
+                    else:
+                        mes = random.choice([11, 12, 1, 2])  # Noviembre-Febrero
+                    
+                    # Generar día basado en el ID para consistencia
+                    dia = ((record_id * 7) % 28) + 1  # Día entre 1-28
+                    
+                    analysis_date = timezone.datetime(anio, mes, dia).date()
                     
                     analysis = StudentDropoutAnalysis.objects.create(
                         age=int(record[4]),  # edad
@@ -1898,3 +1922,141 @@ def _calculate_attendance(record):
     except Exception as e:
         print(f"Error calculando asistencia: {e}")
         return True  # Por defecto, asiste
+
+@api_view(['GET'])
+def get_year_filtered_data(request):
+    """Obtener datos filtrados por año específico"""
+    try:
+        year = request.GET.get('year')
+        if not year:
+            return Response({
+                'error': 'El parámetro "year" es requerido'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        year = int(year)
+        
+        # Filtrar datos por año usando analysis_date
+        analyses = StudentDropoutAnalysis.objects.filter(
+            analysis_date__year=year
+        ).order_by('analysis_date')
+        
+        if not analyses.exists():
+            return Response({
+                'error': f'No hay datos para el año {year}',
+                'data': [],
+                'year': year,
+                'total_records': 0
+            })
+        
+        # Agrupar por mes
+        monthly_data = {}
+        for analysis in analyses:
+            month = analysis.analysis_date.month
+            month_name = analysis.analysis_date.strftime('%b')
+            
+            if month not in monthly_data:
+                monthly_data[month] = {
+                    'month': month,
+                    'month_name': month_name,
+                    'total_students': 0,
+                    'attendance_count': 0,
+                    'absence_count': 0,
+                    'high_risk_count': 0,
+                    'medium_risk_count': 0,
+                    'low_risk_count': 0,
+                    'total_income': 0,
+                    'total_study_time': 0,
+                    'total_age': 0
+                }
+            
+            monthly_data[month]['total_students'] += 1
+            if analysis.attendance:
+                monthly_data[month]['attendance_count'] += 1
+            else:
+                monthly_data[month]['absence_count'] += 1
+            
+            if analysis.risk_level == 'Alto':
+                monthly_data[month]['high_risk_count'] += 1
+            elif analysis.risk_level == 'Medio':
+                monthly_data[month]['medium_risk_count'] += 1
+            else:
+                monthly_data[month]['low_risk_count'] += 1
+            
+            monthly_data[month]['total_income'] += float(analysis.family_income)
+            monthly_data[month]['total_study_time'] += analysis.study_time
+            monthly_data[month]['total_age'] += analysis.age
+        
+        # Calcular promedios y porcentajes
+        chart_data = []
+        for month in sorted(monthly_data.keys()):
+            data = monthly_data[month]
+            
+            attendance_rate = (data['attendance_count'] / data['total_students']) * 100 if data['total_students'] > 0 else 0
+            absence_rate = (data['absence_count'] / data['total_students']) * 100 if data['total_students'] > 0 else 0
+            avg_income = data['total_income'] / data['total_students'] if data['total_students'] > 0 else 0
+            avg_study_time = data['total_study_time'] / data['total_students'] if data['total_students'] > 0 else 0
+            avg_age = data['total_age'] / data['total_students'] if data['total_students'] > 0 else 0
+            
+            # Calcular score de riesgo promedio
+            risk_score = 0
+            if data['high_risk_count'] > 0:
+                risk_score += (data['high_risk_count'] / data['total_students']) * 85
+            if data['medium_risk_count'] > 0:
+                risk_score += (data['medium_risk_count'] / data['total_students']) * 60
+            if data['low_risk_count'] > 0:
+                risk_score += (data['low_risk_count'] / data['total_students']) * 30
+            
+            chart_data.append({
+                'date': data['month_name'],
+                'attendance_rate': round(attendance_rate, 1),
+                'absence_rate': round(absence_rate, 1),
+                'risk_score': round(risk_score, 2),
+                'ingresoPromedio': round(avg_income, 0),
+                'study_time': round(avg_study_time, 1),
+                'age': round(avg_age, 1),
+                'total_students': data['total_students'],
+                'high_risk': data['high_risk_count'],
+                'medium_risk': data['medium_risk_count'],
+                'low_risk': data['low_risk_count'],
+                'hasData': True
+            })
+        
+        # Rellenar meses faltantes con datos vacíos
+        complete_data = []
+        for month in range(1, 13):
+            month_name = timezone.datetime(year, month, 1).strftime('%b')
+            existing_data = next((d for d in chart_data if d['date'] == month_name), None)
+            
+            if existing_data:
+                complete_data.append(existing_data)
+            else:
+                complete_data.append({
+                    'date': month_name,
+                    'attendance_rate': 0,
+                    'absence_rate': 100,
+                    'risk_score': 0,
+                    'ingresoPromedio': 0,
+                    'study_time': 0,
+                    'age': 0,
+                    'total_students': 0,
+                    'high_risk': 0,
+                    'medium_risk': 0,
+                    'low_risk': 0,
+                    'hasData': False
+                })
+        
+        return Response({
+            'data': complete_data,
+            'year': year,
+            'total_records': analyses.count(),
+            'available_months': [d['date'] for d in complete_data if d['hasData']]
+        })
+        
+    except ValueError:
+        return Response({
+            'error': 'El año debe ser un número válido'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({
+            'error': f'Error obteniendo datos filtrados: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
