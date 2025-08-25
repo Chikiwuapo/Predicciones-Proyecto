@@ -81,6 +81,8 @@ export default function Stats() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [showExampleData, setShowExampleData] = useState(true); // Controlar si mostrar datos de ejemplo
+  const [showAllMonths, setShowAllMonths] = useState(true);
+  const [fillEmptyMonths, setFillEmptyMonths] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
@@ -221,104 +223,12 @@ export default function Stats() {
 
   // Preparar datos para gráficos
   const prepareChartData = () => {
-    // Generar fechas dinámicas
+    // Generar fechas dinámicas SOLO para datos de ejemplo
     const dynamicDates = generateDynamicDates();
 
     if (!dropoutData.length) {
-      // Si no hay datos y se permiten datos de ejemplo, generarlos
       if (showExampleData) {
-        return dynamicDates.map((dateInfo, index) => ({
-          date: dateInfo.display,
-          risk_score: 75 + Math.random() * 15, // 75-90
-          study_time: 15 + Math.random() * 10, // 15-25
-          age: 18 + Math.random() * 4, // 18-22
-          attendance_count: Math.floor(Math.random() * 20) + 10, // 10-30
-          total_count: Math.floor(Math.random() * 30) + 20, // 20-50
-          count: Math.floor(Math.random() * 30) + 20, // 20-50
-          family_income_total: Math.floor(Math.random() * 50000) + 20000, // 20000-70000
-          attendance_rate: Math.floor(Math.random() * 30) + 70, // 70-100%
-          absence_rate: Math.floor(Math.random() * 30), // 0-30%
-          ingresoPromedio: Math.floor(Math.random() * 3000) + 2000 // 2000-5000
-        }));
-      } else {
-        // Si no se permiten datos de ejemplo, retornar array vacío
-        return [];
-      }
-    }
-
-    // Agrupar por fecha y calcular promedios
-    const groupedByDate = dropoutData.reduce((acc, item) => {
-      // Encontrar la fecha correspondiente basada en la fecha real del item
-      const itemDate = new Date(item.created_at);
-      const itemYear = itemDate.getFullYear();
-      const itemMonth = itemDate.getMonth();
-      
-      // Buscar la fecha dinámica que coincida con el año y mes del item
-      let displayDate = null;
-      for (const dateInfo of dynamicDates) {
-        if (dateInfo.year === itemYear && dateInfo.month === itemMonth) {
-          displayDate = dateInfo.display;
-          break;
-        }
-      }
-      
-      // Si no se encuentra una fecha coincidente, usar la fecha más reciente
-      if (!displayDate) {
-        displayDate = dynamicDates[0].display;
-      }
-      
-      if (!acc[displayDate]) {
-        acc[displayDate] = {
-          date: displayDate,
-          risk_score: 0,
-          study_time: 0,
-          age: 0,
-          attendance_count: 0,
-          total_count: 0,
-          count: 0,
-          family_income_total: 0
-        };
-      }
-      
-      // Convertir riesgo a escala 60-95 basado en el nivel real
-      let riskScore;
-      switch (item.risk_level) {
-        case 'Alto':
-          riskScore = 85 + Math.random() * 10; // 85-95
-          break;
-        case 'Medio':
-          riskScore = 75 + Math.random() * 10; // 75-85
-          break;
-        case 'Bajo':
-          riskScore = 65 + Math.random() * 10; // 65-75
-          break;
-        default:
-          riskScore = 70 + Math.random() * 15; // 70-85
-      }
-      
-      acc[displayDate].risk_score += riskScore;
-      acc[displayDate].study_time += item.study_time;
-      acc[displayDate].age += item.age;
-      acc[displayDate].family_income_total += item.family_income || 0;
-      
-      // Corregir la lógica de asistencia: attendance es true cuando SÍ asiste
-      const isAttending = item.attendance === true;
-      
-      // Agregar al conteo de asistencia
-      if (isAttending) {
-        acc[displayDate].attendance_count += 1;
-      }
-      acc[displayDate].total_count += 1;
-      acc[displayDate].count += 1;
-      
-      return acc;
-    }, {} as Record<string, any>);
-
-    // Asegurar que todas las fechas dinámicas tengan datos
-    dynamicDates.forEach(dateInfo => {
-      if (!groupedByDate[dateInfo.display]) {
-        // Si no hay datos para esta fecha, generar datos de ejemplo
-        groupedByDate[dateInfo.display] = {
+        const base = dynamicDates.map((dateInfo) => ({
           date: dateInfo.display,
           risk_score: 75 + Math.random() * 15,
           study_time: 15 + Math.random() * 10,
@@ -326,31 +236,185 @@ export default function Stats() {
           attendance_count: Math.floor(Math.random() * 20) + 10,
           total_count: Math.floor(Math.random() * 30) + 20,
           count: Math.floor(Math.random() * 30) + 20,
-          family_income_total: Math.floor(Math.random() * 50000) + 20000
+          family_income_total: Math.floor(Math.random() * 50000) + 20000,
+          attendance_rate: Math.floor(Math.random() * 30) + 70,
+          absence_rate: Math.floor(Math.random() * 30),
+          ingresoPromedio: Math.floor(Math.random() * 3000) + 2000,
+          monthIndex: dateInfo.month,
+        }));
+        if (!showAllMonths) {
+          const selectedLabel = new Date(selectedYear, selectedMonth).toLocaleDateString('es-ES', { month: 'short' });
+          return base.filter(d => d.date === selectedLabel);
+        }
+        return base.sort((a, b) => a.monthIndex - b.monthIndex).map(({ monthIndex, ...rest }) => rest);
+      }
+      return [];
+    }
+
+    // Vista por un solo mes: agrupar por día del mes seleccionado
+    if (!showAllMonths) {
+      const groupedByDay = dropoutData.reduce((acc, item) => {
+        const d = new Date(item.created_at);
+        const y = d.getFullYear();
+        const m = d.getMonth();
+        if (y !== selectedYear || m !== selectedMonth) return acc;
+        const day = d.getDate();
+        const label = new Date(selectedYear, selectedMonth, day).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+        if (!acc[day]) {
+          acc[day] = {
+            date: label,
+            dayIndex: day,
+            risk_score: 0,
+            study_time: 0,
+            age: 0,
+            attendance_count: 0,
+            total_count: 0,
+            count: 0,
+            family_income_total: 0,
+          };
+        }
+        let riskScore;
+        switch (item.risk_level) {
+          case 'Alto': riskScore = 85 + Math.random() * 10; break;
+          case 'Medio': riskScore = 75 + Math.random() * 10; break;
+          case 'Bajo': riskScore = 65 + Math.random() * 10; break;
+          default: riskScore = 70 + Math.random() * 15;
+        }
+        acc[day].risk_score += riskScore;
+        acc[day].study_time += item.study_time;
+        acc[day].age += item.age;
+        acc[day].family_income_total += item.family_income || 0;
+        if (item.attendance === true) acc[day].attendance_count += 1;
+        acc[day].total_count += 1;
+        acc[day].count += 1;
+        return acc;
+      }, {} as Record<number, any>);
+
+      const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+
+      // Lista diaria con métricas
+      let daily = Object.values(groupedByDay)
+        .map((item: any) => {
+          const attendance_rate = item.total_count > 0 ? Math.round((item.attendance_count / item.total_count) * 100) : 0;
+          const absence_rate = 100 - attendance_rate;
+          const ingresoPromedioCalculado = item.count > 0 ? Math.round(item.family_income_total / item.count) : 0;
+          return {
+            ...item,
+            risk_score: item.count > 0 ? Math.round((item.risk_score / item.count) * 100) / 100 : 0,
+            study_time: item.count > 0 ? Math.round((item.study_time / item.count) * 100) / 100 : 0,
+            age: item.count > 0 ? Math.round((item.age / item.count) * 100) / 100 : 0,
+            attendance_rate,
+            absence_rate,
+            ingresoPromedio: ingresoPromedioCalculado,
+            hasData: item.count > 0,
+          };
+        })
+        .sort((a: any, b: any) => a.dayIndex - b.dayIndex)
+        .map(({ dayIndex, total_count, attendance_count, family_income_total, count, ...rest }: any) => rest);
+
+      // Rellenar días faltantes con 0 para tener curva continua
+      const filledDaily = Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
+        const label = new Date(selectedYear, selectedMonth, day).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+        const found = daily.find(d => d.date === label);
+        return found || {
+          date: label,
+          risk_score: 0,
+          study_time: 0,
+          age: 0,
+          attendance_rate: 0,
+          absence_rate: 100,
+          ingresoPromedio: 0,
+          hasData: false,
+        };
+      });
+
+      return filledDaily;
+    }
+
+    // Vista por año: agrupar por mes del año seleccionado
+    const groupedByMonth = dropoutData.reduce((acc, item) => {
+      const itemDate = new Date(item.created_at);
+      const itemYear = itemDate.getFullYear();
+      const itemMonth = itemDate.getMonth();
+
+      if (itemYear !== selectedYear) return acc;
+
+      const label = new Date(selectedYear, itemMonth).toLocaleDateString('es-ES', { month: 'short' });
+      if (!acc[itemMonth]) {
+        acc[itemMonth] = {
+          date: label,
+          monthIndex: itemMonth,
+          risk_score: 0,
+          study_time: 0,
+          age: 0,
+          attendance_count: 0,
+          total_count: 0,
+          count: 0,
+          family_income_total: 0,
         };
       }
-    });
 
-    // Calcular promedios y ordenar por fecha
-    const result = Object.values(groupedByDate).map(item => {
-      const attendance_rate = Math.round((item.attendance_count / item.total_count) * 100);
-      const absence_rate = 100 - attendance_rate;
-      const ingresoPromedioCalculado = Math.round(item.family_income_total / item.count);
-      
-      return {
-        ...item,
-        risk_score: Math.round((item.risk_score / item.count) * 100) / 100,
-        study_time: Math.round((item.study_time / item.count) * 100) / 100,
-        age: Math.round((item.age / item.count) * 100) / 100,
-        attendance_rate: attendance_rate,
-        absence_rate: absence_rate,
-        ingresoPromedio: ingresoPromedioCalculado
-      };
-    });
+      let riskScore;
+      switch (item.risk_level) {
+        case 'Alto': riskScore = 85 + Math.random() * 10; break;
+        case 'Medio': riskScore = 75 + Math.random() * 10; break;
+        case 'Bajo': riskScore = 65 + Math.random() * 10; break;
+        default: riskScore = 70 + Math.random() * 15;
+      }
 
-    // Ordenar por las fechas dinámicas generadas
-    const dateOrder = dynamicDates.map(d => d.display);
-    return result.sort((a, b) => dateOrder.indexOf(a.date) - dateOrder.indexOf(b.date));
+      acc[itemMonth].risk_score += riskScore;
+      acc[itemMonth].study_time += item.study_time;
+      acc[itemMonth].age += item.age;
+      acc[itemMonth].family_income_total += item.family_income || 0;
+
+      const isAttending = item.attendance === true;
+      if (isAttending) acc[itemMonth].attendance_count += 1;
+      acc[itemMonth].total_count += 1;
+      acc[itemMonth].count += 1;
+      return acc;
+    }, {} as Record<number, any>);
+
+    // Convertir a lista ordenada por mes y calcular métricas
+    let result = Object.values(groupedByMonth)
+      .map((item: any) => {
+        const attendance_rate = item.total_count > 0 ? Math.round((item.attendance_count / item.total_count) * 100) : 0;
+        const absence_rate = 100 - attendance_rate;
+        const ingresoPromedioCalculado = item.count > 0 ? Math.round(item.family_income_total / item.count) : 0;
+        return {
+          ...item,
+          risk_score: item.count > 0 ? Math.round((item.risk_score / item.count) * 100) / 100 : 0,
+          study_time: item.count > 0 ? Math.round((item.study_time / item.count) * 100) / 100 : 0,
+          age: item.count > 0 ? Math.round((item.age / item.count) * 100) / 100 : 0,
+          attendance_rate,
+          absence_rate,
+          ingresoPromedio: ingresoPromedioCalculado,
+          hasData: item.count > 0,
+        };
+      })
+      .sort((a: any, b: any) => a.monthIndex - b.monthIndex)
+      .map(({ monthIndex, total_count, attendance_count, family_income_total, count, ...rest }: any) => rest);
+
+    // Rellenar meses vacíos con ceros (para curvas suaves) si corresponde
+    if (showAllMonths && fillEmptyMonths) {
+      const months = Array.from({ length: 12 }, (_, i) => i);
+      const filled = months.map(i => {
+        const label = new Date(selectedYear, i).toLocaleDateString('es-ES', { month: 'short' });
+        const found = result.find(r => r.date === label);
+        return found || {
+          date: label,
+          risk_score: 0,
+          study_time: 0,
+          age: 0,
+          attendance_rate: 0,
+          absence_rate: 100,
+          ingresoPromedio: 0,
+          hasData: false,
+        };
+      });
+      result = filled;
+    }
+
+    return result;
   };
 
   const chartData = prepareChartData();
@@ -528,117 +592,6 @@ export default function Stats() {
             </div>
           </div>
 
-          {/* Gráfico Principal - Estilo profesional como la imagen */}
-          <div className={styles.chartsGrid}>
-            <div className={styles.chartCard}>
-              <div className={styles.chartHeader}>
-                <h3>
-                  {activeSeries === 'asistencia' ? 'Tasa de Asistencia Estudiantil' : 
-                   activeSeries === 'riesgo' ? 'Puntuación de Riesgo de Abandono' :
-                   'Ingreso Promedio de Familiares'}
-                </h3>
-                {activeSeries === 'ingreso' && (
-                  <div className={styles.currentValue}>
-                    <span>
-                      Ingreso Promedio Total: ${ingresoPromedioReal.toLocaleString()}
-                    </span>
-                  </div>
-                )}
-                <div className={styles.seriesOptions}>
-                    <button 
-                      className={`${styles.seriesButton} ${activeSeries === 'asistencia' ? styles.active : ''}`}
-                      onClick={() => setActiveSeries('asistencia')}
-                    >
-                      Asistencia
-                    </button>
-                    <button 
-                      className={`${styles.seriesButton} ${activeSeries === 'riesgo' ? styles.active : ''}`}
-                      onClick={() => setActiveSeries('riesgo')}
-                    >
-                      Riesgo
-                    </button>
-                    <button 
-                      className={`${styles.seriesButton} ${activeSeries === 'ingreso' ? styles.active : ''}`}
-                      onClick={() => setActiveSeries('ingreso')}
-                    >
-                      Ingreso Familiar
-                    </button>
-                </div>
-                <button className={styles.getChartButton}>
-                  <span>Get this chart</span>
-                  <span className={styles.codeIcon}>&lt;/&gt;</span>
-                </button>
-              </div>
-              {chartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={500}>
-                  <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                    <defs>
-                      <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#ff69b4" stopOpacity={0.8}/>
-                        <stop offset="100%" stopColor="#ff69b4" stopOpacity={0.1}/>
-                      </linearGradient>
-                    </defs>
-                    {/* Fondo negro del gráfico */}
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" strokeOpacity={0.2} />
-                    <XAxis 
-                      dataKey="date" 
-                      stroke="#666"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fill: '#999' }}
-                    />
-                    <YAxis 
-                      stroke="#666"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{ fill: '#999' }}
-                      domain={[60, 95]}
-                      ticks={[64, 68, 72, 76, 80, 84, 88, 92]}
-                    />
-                    <Tooltip 
-                      contentStyle={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.95)',
-                        border: '1px solid #333',
-                        borderRadius: '8px',
-                        color: '#fff',
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
-                      }}
-                      cursor={false}
-                      labelStyle={{ color: '#fff', fontWeight: 'bold' }}
-                      formatter={(value: any) => [
-                        `${value.toFixed(2)}`, 
-                        'Data Tooltip'
-                      ]}
-                    />
-                    {/* Área rellena debajo de la línea */}
-                    <Area 
-                      type="monotone" 
-                      dataKey="risk_score" 
-                      fill="url(#areaGradient)"
-                      stroke="none"
-                    />
-                    {/* Línea principal */}
-                    <Line 
-                      type="monotone" 
-                      dataKey="risk_score" 
-                      stroke="#ff69b4" 
-                      strokeWidth={3}
-                      dot={{ fill: '#ff69b4', strokeWidth: 2, r: 6, stroke: '#000' }}
-                      activeDot={{ fill: '#ff69b4', strokeWidth: 3, r: 8, stroke: '#fff' }}
-                    />
-                  </ComposedChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className={styles.noDataMessage}>
-                  <p>No hay datos disponibles para mostrar en los gráficos.</p>
-                  <p>Agrega análisis de abandono escolar o implementa datos de la base de datos.</p>
-                </div>
-              )}
-            </div>
-          </div>
-
           {/* Segundo Gráfico Principal - Asistencia */}
           <div className={styles.chartsGrid}>
             <div className={styles.chartCard}>
@@ -661,6 +614,7 @@ export default function Stats() {
                       ))}
                     </select>
                   </div>
+                                  {!showAllMonths && (
                   <div className={styles.dateControlGroup}>
                     <label className={styles.dateLabel}>Mes</label>
                     <select 
@@ -675,22 +629,66 @@ export default function Stats() {
                       ))}
                     </select>
                   </div>
+                )}
+                  <div className={styles.dateControlGroup}>
+                    <label className={styles.dateLabel}>Rango</label>
+                    <select 
+                      value={showAllMonths ? 'all' : 'single'}
+                      onChange={(e) => setShowAllMonths(e.target.value === 'all')}
+                      className={styles.dateSelect}
+                    >
+                      <option value="single">Solo mes seleccionado</option>
+                      <option value="all">Todos los meses del año</option>
+                    </select>
+                  </div>
+                  {showAllMonths && (
+                    <div className={styles.dateControlGroup}>
+                      <label className={styles.dateLabel}>Rellenar meses vacíos</label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={fillEmptyMonths} 
+                          onChange={(e) => setFillEmptyMonths(e.target.checked)}
+                        />
+                        <span className={styles.dateLabel}>{fillEmptyMonths ? 'Sí' : 'No'}</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
+
+                {/* Etiqueta del período seleccionado */}
+                <div className={styles.currentValue}>
+                  {showAllMonths ? (
+                    <span>
+                      Mostrando: Todos los meses del {selectedYear}
+                    </span>
+                  ) : (
+                    <span>
+                      Mostrando: {new Date(selectedYear, selectedMonth).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                    </span>
+                  )}
                 </div>
                 
                 {chartData.length > 0 && (
                   <div className={styles.currentValue}>
                     {activeSeries === 'asistencia' ? (
-                      <>
-                        <span style={{ color: '#00ff88' }}>
-                          Tasa de Asistencia: {chartData[chartData.length - 1]?.attendance_rate.toFixed(1)}%
-                        </span>
-                        <span style={{ color: '#ff69b4' }}>
-                          Tasa de Inasistencia: {(100 - (chartData[chartData.length - 1]?.attendance_rate || 0)).toFixed(1)}%
-                        </span>
-                      </>
+                      (() => {
+                        const lastWithData = [...chartData].reverse().find(d => (d as any).hasData);
+                        const att = lastWithData ? (lastWithData as any).attendance_rate : 0;
+                        return (
+                          <>
+                            <span style={{ color: '#00ff88' }}>
+                              Tasa de Asistencia: {att.toFixed(1)}%
+                            </span>
+                            <span style={{ color: '#ff69b4' }}>
+                              Tasa de Inasistencia: {(100 - att).toFixed(1)}%
+                            </span>
+                          </>
+                        );
+                      })()
                     ) : (
                       <span style={{ color: '#ff69b4' }}>
-                        Riesgo Actual: {chartData[chartData.length - 1]?.risk_score.toFixed(2)}
+                        Riesgo Actual: {(() => { const lastWithData = [...chartData].reverse().find(d => (d as any).hasData); const rs = lastWithData ? (lastWithData as any).risk_score : 0; return rs.toFixed(2); })()}
                       </span>
                     )}
                   </div>
@@ -1082,9 +1080,9 @@ export default function Stats() {
             </div>
 
             {/* Gráfico de porcentaje de abandono por mes */}
-            <div className={styles.chartCard}>
+            <div className={`${styles.chartCard} ${styles.fullWidth}`}>
               <h3>Porcentaje de Riesgo por Mes</h3>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={420}>
                 <ComposedChart data={generateDropoutByMonthData()}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#333" strokeOpacity={0.3} />
                   <XAxis 
@@ -1156,9 +1154,9 @@ export default function Stats() {
             </div>
 
             {/* Gráfico de dispersión - Edad vs Tiempo de Estudio */}
-            <div className={styles.chartCard}>
+            <div className={`${styles.chartCard} ${styles.fullWidth}`}>
               <h3>Edad vs Tiempo de Estudio</h3>
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer width="100%" height={500}>
                 <ComposedChart data={ageStudyData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#333" strokeOpacity={0.3} />
                   <XAxis 

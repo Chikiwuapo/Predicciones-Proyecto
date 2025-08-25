@@ -255,36 +255,32 @@ const PersonalCharts: React.FC<PersonalChartsProps> = ({ studentData }) => {
     <div className="personal-charts">
       <h3 className="charts-title">📊 ANÁLISIS PERSONAL AVANZADO</h3>
       
-      {/* Estadísticas personales rápidas */}
+      {/* Estadísticas personales rápidas (compactas) */}
       <div className="quick-stats">
         <div className="stat-card">
-          <h4>🎯 Nivel de Riesgo</h4>
+          <h4>🎯 Riesgo</h4>
           <p className={`risk-level ${studentData.risk_level.toLowerCase()}`}>
             {studentData.risk_level}
           </p>
           <p>Confianza: {studentData.confidence.toFixed(2)}%</p>
-          <p className="stat-detail">Percentil: {personalStats.riskTrend.percentile}%</p>
         </div>
         
         <div className="stat-card">
-          <h4>📚 Eficiencia de Estudio</h4>
+          <h4>📚 Estudio</h4>
           <p className="efficiency">{personalStats.studyEfficiency.level}</p>
-          <p>{studentData.study_time} h/semana</p>
-          <p className="stat-detail">{personalStats.studyEfficiency.description}</p>
+          <p>{studentData.study_time} h/sem</p>
         </div>
         
         <div className="stat-card">
-          <h4>💰 Categoría de Ingresos</h4>
+          <h4>💰 Ingresos</h4>
           <p className="income-category">{personalStats.incomeCategory.level}</p>
           <p>S/. {studentData.family_income.toLocaleString()}</p>
-          <p className="stat-detail">{personalStats.incomeCategory.description}</p>
         </div>
         
         <div className="stat-card">
-          <h4>🤝 Nivel de Apoyo</h4>
+          <h4>🤝 Apoyo</h4>
           <p className="support-level">{personalStats.supportLevel}/3</p>
           <p>Factores activos</p>
-          <p className="stat-detail">{personalStats.supportGap.description}</p>
         </div>
       </div>
 
@@ -310,7 +306,7 @@ const PersonalCharts: React.FC<PersonalChartsProps> = ({ studentData }) => {
 
         {/* Factores de Riesgo Detallados */}
         <div className="chart-container">
-          <h4>🔍 Análisis de Factores de Riesgo y Apoyo</h4>
+          <h4>🔍 Factores de Riesgo y Apoyo</h4>
           <ResponsiveContainer width="100%" height={350}>
             <PieChart>
               <Pie
@@ -318,7 +314,7 @@ const PersonalCharts: React.FC<PersonalChartsProps> = ({ studentData }) => {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, value, description }) => `${name}: ${value ? 'Sí' : 'No'}`}
+                label={({ name, value }) => `${name}: ${value ? 'Sí' : 'No'}`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
@@ -327,49 +323,20 @@ const PersonalCharts: React.FC<PersonalChartsProps> = ({ studentData }) => {
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </Pie>
-              <Tooltip 
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload;
-                    return (
-                      <div className="custom-tooltip">
-                        <p className="tooltip-label">{data.name}</p>
-                        <p>{data.description}</p>
-                        <p><strong>Impacto:</strong> {data.impact}</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
         {/* Distribución de Riesgo en la Población */}
         <div className="chart-container">
-          <h4>📊 Posición del Estudiante en la Distribución de Riesgo</h4>
+          <h4>📊 Distribución de Riesgo</h4>
           <ResponsiveContainer width="100%" height={350}>
             <BarChart data={riskDistributionData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis dataKey="name" stroke="#cccccc" />
               <YAxis stroke="#cccccc" />
-              <Tooltip 
-                content={({ active, payload, label }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload;
-                    return (
-                      <div className="custom-tooltip">
-                        <p className="tooltip-label">{data.name}</p>
-                        <p>Cantidad: {data.value}</p>
-                        <p>Porcentaje: {data.percentage}%</p>
-                        <p>Total población: {globalStats.total_analyses}</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="value" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
@@ -377,30 +344,14 @@ const PersonalCharts: React.FC<PersonalChartsProps> = ({ studentData }) => {
 
         {/* Análisis de Dispersión Edad vs Tiempo de Estudio */}
         <div className="chart-container full-width">
-          <h4>🎯 Análisis de Dispersión: Edad vs Tiempo de Estudio</h4>
+          <h4>🎯 Dispersión: Edad vs Tiempo de Estudio</h4>
           <ResponsiveContainer width="100%" height={400}>
             <ScatterChart>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis type="number" dataKey="age" name="Edad" stroke="#cccccc" />
               <YAxis type="number" dataKey="study_time" name="Tiempo de Estudio (h/sem)" stroke="#cccccc" />
               <ZAxis type="number" dataKey="income" range={[60, 400]} />
-              <Tooltip 
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload;
-                    return (
-                      <div className="custom-tooltip">
-                        <p className="tooltip-label">Estudiante Seleccionado</p>
-                        <p>Edad: {data.age} años</p>
-                        <p>Tiempo de estudio: {data.study_time} h/sem</p>
-                        <p>Ingresos: S/. {data.income.toLocaleString()}</p>
-                        <p>Riesgo: {data.risk_level}</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Scatter name="Estudiante" data={scatterData} fill="#FF6384" />
             </ScatterChart>
@@ -408,92 +359,7 @@ const PersonalCharts: React.FC<PersonalChartsProps> = ({ studentData }) => {
         </div>
       </div>
 
-      {/* Análisis detallado y recomendaciones */}
-      <div className="detailed-analysis">
-        <h4>🔬 ANÁLISIS DETALLADO Y METRICS</h4>
-        
-        <div className="metrics-grid">
-          <div className="metric-card">
-            <h5>📊 Posición Relativa</h5>
-            <div className="metric-content">
-              <p><strong>Edad:</strong> Percentil {personalStats.ageGroup.percentile}%</p>
-              <p><strong>Estudio:</strong> Percentil {personalStats.studyEfficiency.percentile}%</p>
-              <p><strong>Ingresos:</strong> Percentil {personalStats.incomeCategory.percentile}%</p>
-            </div>
-          </div>
-          
-          <div className="metric-card">
-            <h5>🎯 Análisis de Riesgo</h5>
-            <div className="metric-content">
-              <p><strong>Nivel:</strong> {studentData.risk_level}</p>
-              <p><strong>Confianza:</strong> {studentData.confidence.toFixed(2)}%</p>
-              <p><strong>Tendencia:</strong> {personalStats.riskTrend.description}</p>
-            </div>
-          </div>
-          
-          <div className="metric-card">
-            <h5>💼 Vulnerabilidad Económica</h5>
-            <div className="metric-content">
-              <p><strong>Índice:</strong> {personalStats.economicVulnerability.index}</p>
-              <p><strong>Descripción:</strong> {personalStats.economicVulnerability.description}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recomendaciones personalizadas avanzadas */}
-      <div className="personal-recommendations">
-        <h4>💡 RECOMENDACIONES PERSONALIZADAS BASADAS EN DATOS REALES</h4>
-        <div className="recommendations-grid">
-          {studentData.risk_level === 'ALTO' && (
-            <div className="recommendation urgent">
-              <h5>🚨 Acción Inmediata Requerida</h5>
-              <ul>
-                <li>Entrevista personal con orientador académico (Prioridad: Crítica)</li>
-                <li>Plan de apoyo intensivo semanal con seguimiento diario</li>
-                <li>Coordinación inmediata con familia para plan de acción</li>
-                <li>Evaluación psicológica y social del estudiante</li>
-              </ul>
-            </div>
-          )}
-          
-          {personalStats.studyEfficiency.level === 'Necesita mejorar' && (
-            <div className="recommendation study">
-              <h5>📚 Programa de Mejora del Tiempo de Estudio</h5>
-              <ul>
-                <li>Programa estructurado de {Math.max(5 - studentData.study_time, 2)} horas adicionales/semana</li>
-                <li>Técnicas de concentración y organización del tiempo</li>
-                <li>Mentoría con estudiantes del percentil superior</li>
-                <li>Seguimiento semanal del progreso académico</li>
-              </ul>
-            </div>
-          )}
-          
-          {!studentData.family_support && (
-            <div className="recommendation family">
-              <h5>👨‍👩‍👧‍👦 Programa de Involucramiento Familiar</h5>
-              <ul>
-                <li>Reunión semanal con padres/tutores</li>
-                <li>Programa de orientación familiar y comunicación</li>
-                <li>Establecimiento de rutinas de estudio en casa</li>
-                <li>Coordinación con servicios sociales si es necesario</li>
-              </ul>
-            </div>
-          )}
-          
-          {personalStats.incomeCategory.level === 'Bajo' && (
-            <div className="recommendation economic">
-              <h5>💼 Programa de Apoyo Económico Integral</h5>
-              <ul>
-                <li>Becas y programas de ayuda económica disponibles</li>
-                <li>Materiales educativos gratuitos y préstamos</li>
-                <li>Conectividad y recursos digitales subsidiados</li>
-                <li>Programas de alimentación escolar</li>
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Secciones textuales extensas removidas para un enfoque 100% gráfico */}
     </div>
   );
 };

@@ -1405,6 +1405,7 @@ export default function Abandono() {
             {/* Gráficos Personales para Análisis del Historial - Solo mostrar si hay datos */}
             {selectedAnalysis && history.length > 0 && chartData && (
               <PersonalCharts
+                key={selectedAnalysis.id}
                 studentData={{
                   age: parseInt(selectedAnalysis.parameters.age) || 0,
                   gender: selectedAnalysis.parameters.gender,
