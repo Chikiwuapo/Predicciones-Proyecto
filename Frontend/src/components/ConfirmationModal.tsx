@@ -14,6 +14,7 @@ type ConfirmationModalProps = {
   icon?: React.ReactNode;
 };
 
+
 const ConfirmationModal: FC<ConfirmationModalProps> = ({
   isOpen,
   title,
