@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WineAnalysis, WineClassification, WineComponent
+from .models import WineAnalysis, WineClassification, WineComponent, StudentDropoutAnalysis
 
 class WineAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,5 +14,10 @@ class WineClassificationSerializer(serializers.ModelSerializer):
 class WineComponentSerializer(serializers.ModelSerializer):
     class Meta:
         model = WineComponent
+        fields = '__all__'
+
+class StudentDropoutAnalysisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentDropoutAnalysis
         fields = '__all__'
 

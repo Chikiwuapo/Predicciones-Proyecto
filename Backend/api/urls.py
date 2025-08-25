@@ -1,18 +1,44 @@
 from django.urls import path
 from .views import (
     hello_world, 
+    test_database,
     test_classifications,
     WineAnalysisView, 
     WineAnalysisDetailView, 
     WineStatisticsView, 
-    RealTimeDataView
+    RealTimeDataView,
+    StudentDropoutAnalysisView,
+    StudentDropoutAnalysisDetailView,
+    StudentDropoutStatisticsView,
+    clear_all_analyses,
+    implement_database_data,
+    get_attendance_timeline,
+    get_simple_statistics,
+    get_time_series_data,
+    get_risk_time_series_data,
+    get_real_time_series_data,
+    get_available_dates,
+    get_basic_chart_data
 )
 
 urlpatterns = [
     path('hello/', hello_world),
+    path('test-database/', test_database, name='test-database'),
     path('test-classifications/', test_classifications, name='test-classifications'),
     path('wine-analysis/', WineAnalysisView.as_view(), name='wine-analysis'),
     path('wine-analysis/<int:analysis_id>/', WineAnalysisDetailView.as_view(), name='wine-analysis-detail'),
     path('wine-statistics/', WineStatisticsView.as_view(), name='wine-statistics'),
     path('real-time-data/<int:analysis_id>/', RealTimeDataView.as_view(), name='real-time-data'),
+    path('student-dropout-analysis/', StudentDropoutAnalysisView.as_view(), name='student-dropout-analysis'),
+    path('student-dropout-analysis/<int:analysis_id>/', StudentDropoutAnalysisDetailView.as_view(), name='student-dropout-analysis-detail'),
+    path('student-dropout-analysis/clear-all/', clear_all_analyses, name='clear-all-analyses'),
+    path('student-dropout-statistics/', StudentDropoutStatisticsView.as_view(), name='student-dropout-statistics'),
+    path('implement-database-data/', implement_database_data, name='implement-database-data'),
+    path('attendance-timeline/', get_attendance_timeline, name='attendance-timeline'),
+    path('simple-statistics/', get_simple_statistics, name='simple-statistics'),
+    path('time-series-data/', get_time_series_data, name='time-series-data'),
+    path('risk-time-series-data/', get_risk_time_series_data, name='risk-time-series-data'),
+    path('real-time-series-data/', get_real_time_series_data, name='real-time-series-data'),
+    path('available-dates/', get_available_dates, name='available-dates'),
+    path('basic-chart-data/', get_basic_chart_data, name='basic-chart-data'),
 ]

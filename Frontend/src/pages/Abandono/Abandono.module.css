@@ -144,6 +144,25 @@
   box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.25);
 }
 
+.readOnlyInput {
+  background-color: #f8f9fa;
+  color: #495057;
+  cursor: not-allowed;
+  border: 1px solid #dee2e6;
+}
+
+.readOnlyInput:focus {
+  border-color: #dee2e6;
+  box-shadow: none;
+}
+
+.autoLabel {
+  font-size: 0.8em;
+  color: #6c757d;
+  font-style: italic;
+  margin-left: 8px;
+}
+
 .checkboxGroup {
   grid-column: 1 / -1;
   display: flex;
@@ -568,6 +587,26 @@
   height: 16px;
 }
 
+.implementButton {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  border-color: #27ae60;
+  color: white;
+}
+
+.implementButton:hover {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  border-color: #229954;
+  box-shadow: 0 6px 18px rgba(46, 204, 113, 0.25);
+}
+
+.implementButton:disabled {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  border-color: #7f8c8d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* Info icon button inside inputs */
 .infoButton {
   display: inline-flex;
@@ -980,4 +1019,557 @@
 .pageInfo {
   font-size: 13px;
   color: var(--muted);
+}
+
+/* Estilos para selección y eliminación */
+.selectionBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(245, 166, 35, 0.1);
+  border: 1px solid var(--neon);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  animation: slideIn 0.3s ease;
+}
+
+.selectionInfo {
+  color: var(--neon);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.selectionActions {
+  display: flex;
+  gap: 12px;
+}
+
+.deleteSelectedButton {
+  padding: 8px 16px;
+  background: #ff5252;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteSelectedButton:hover {
+  background: #d32f2f;
+  transform: translateY(-1px);
+}
+
+.cancelSelectionButton {
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelSelectionButton:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.selectAllBar {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg-2);
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.selectAllLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.selectAllLabel input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--neon);
+}
+
+.historyCard {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.historyCard.selected {
+  background: rgba(245, 166, 35, 0.1);
+  border-color: var(--neon);
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.3);
+}
+
+.historyCard.analysisSelected {
+  background: rgba(74, 144, 226, 0.1);
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
+  transform: scale(1.02);
+}
+
+/* Caja de información */
+.infoBox {
+  background: rgba(74, 144, 226, 0.1);
+  border: 1px solid #4a90e2;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideIn 0.3s ease;
+}
+
+.infoIcon {
+  color: #4a90e2;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.infoBox p {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.infoBox strong {
+  color: #4a90e2;
+}
+
+.selectionCheckbox {
+  flex-shrink: 0;
+  margin-top: 16px;
+}
+
+.selectionCheckbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--neon);
+  cursor: pointer;
+}
+
+.cardContent {
+  flex: 1;
+  cursor: pointer;
+}
+
+/* Estilos para el modal de limpiar */
+.clearOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.clearOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearOption:hover {
+  border-color: var(--neon);
+  background: rgba(245, 166, 35, 0.05);
+}
+
+.clearOption input[type="radio"] {
+  margin-top: 2px;
+  accent-color: var(--neon);
+}
+
+.optionContent h4 {
+  margin: 0 0 4px 0;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.optionContent p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive para selección */
+@media (max-width: 768px) {
+  .selectionBar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .selectionActions {
+    justify-content: center;
+  }
+  
+  .clearOption {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Estilos para el selector de registros */
+.recordsSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.recordsSelector label {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.recordsInput {
+  width: 120px;
+  padding: 8px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  background: var(--bg-2);
+  color: var(--text);
+  font-size: 16px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.recordsInput:focus {
+  outline: none;
+  border-color: var(--neon);
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.2);
+}
+
+.recordsInfo {
+  color: var(--muted);
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.recordsPreview {
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.recordsPreview p {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.recordsPreview ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.recordsPreview li {
+  margin-bottom: 6px;
+}
+
+.recordsPreview li:last-child {
+  margin-bottom: 0;
+}
+
+/* Mensaje cuando no hay historial para gráficos */
+.noHistoryForCharts {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.noHistoryForCharts h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #4a90e2;
+  padding-bottom: 12px;
+}
+
+.noHistoryMessage {
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 24px;
+  border: 1px solid #444;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.noHistoryMessage p {
+  color: #cccccc;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.noHistoryMessage strong {
+  color: #4a90e2;
+}
+
+.noHistoryActions {
+  text-align: left;
+  background: #333;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid #4a90e2;
+}
+
+.noHistoryActions p {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+
+.noHistoryActions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.noHistoryActions li {
+  color: #cccccc;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.noHistoryActions li:before {
+  content: "•";
+  color: #4a90e2;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 1.2rem;
+}
+
+.noHistoryActions strong {
+  color: #ffffff;
+}
+
+/* Botón de limpieza forzada */
+.forceCleanupButton {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.forceCleanupButton:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.forceCleanupButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Ajustar el modal para el botón adicional */
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Estado de la base de datos */
+.databaseStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px;
+  background: #333;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.statusLabel {
+  color: #cccccc;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.statusIndicator {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.statusIndicator.hasData {
+  background: rgba(107, 207, 127, 0.2);
+  color: #6bcf7f;
+  border: 1px solid #6bcf7f;
+}
+
+.statusIndicator.noData {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+.refreshButton {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.refreshButton:hover {
+  background: #357abd;
+  transform: scale(1.05);
+}
+
+/* Botón de RESET COMPLETO */
+.resetButton {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: 2px solid #dc3545;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.resetButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  border-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+.resetButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+}
+
+.resetButton:disabled {
+  background: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Animación de pulso para el botón de reset */
+.resetButton:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.resetButton:not(:disabled):hover::before {
+  left: 100%;
+}
+
+/* Información sobre limpieza */
+.cleanupInfo {
+  margin-top: 16px;
+  padding: 16px;
+  background: #333;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.cleanupInfo p {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.cleanupInfo ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cleanupInfo li {
+  color: #cccccc;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.cleanupInfo li:before {
+  content: "•";
+  color: #4a90e2;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 1rem;
+}
+
+.cleanupInfo strong {
+  color: #ffffff;
 }

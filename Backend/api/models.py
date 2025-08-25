@@ -75,3 +75,54 @@ class WineComponent(models.Model):
     
     def __str__(self):
         return f"{self.component_name}: {self.value} {self.unit}"
+
+class StudentDropoutAnalysis(models.Model):
+    """Modelo para almacenar análisis de abandono escolar"""
+    RISK_CHOICES = [
+        ('Alto', 'Alto'),
+        ('Medio', 'Medio'),
+        ('Bajo', 'Bajo'),
+    ]
+    
+    GENDER_CHOICES = [
+        ('M', 'Masculino'),
+        ('F', 'Femenino'),
+        ('O', 'Otro'),
+    ]
+    
+    ECONOMIC_SITUATION_CHOICES = [
+        ('bajo', 'Bajo'),
+        ('medio', 'Medio'),
+        ('alto', 'Alto'),
+    ]
+    
+    # Datos del estudiante
+    age = models.IntegerField(verbose_name="Edad")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="Género")
+    family_income = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Ingresos Familiares")
+    location = models.CharField(max_length=200, verbose_name="Ubicación")
+    economic_situation = models.CharField(max_length=10, choices=ECONOMIC_SITUATION_CHOICES, verbose_name="Situación Económica")
+    study_time = models.IntegerField(verbose_name="Horas de Estudio por Semana")
+    school_support = models.BooleanField(default=False, verbose_name="Apoyo Educativo de la Escuela")
+    family_support = models.BooleanField(default=False, verbose_name="Apoyo Familiar")
+    extra_educational_support = models.BooleanField(default=False, verbose_name="Clases Particulares")
+    
+    # Nuevos campos para el gráfico
+    attendance = models.BooleanField(default=True, verbose_name="Asistencia Regular")
+    analysis_date = models.DateField(default=timezone.now, verbose_name="Fecha del Análisis")
+    
+    # Resultados del análisis
+    risk_level = models.CharField(max_length=10, choices=RISK_CHOICES, verbose_name="Nivel de Riesgo")
+    confidence = models.FloatField(verbose_name="Confianza (%)")
+    
+    # Metadatos
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última Actualización")
+    
+    class Meta:
+        verbose_name = "Análisis de Abandono Escolar"
+        verbose_name_plural = "Análisis de Abandono Escolar"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Análisis {self.id} - {self.risk_level} ({self.confidence}%) - {self.created_at.strftime('%d/%m/%Y %H:%M')}"
